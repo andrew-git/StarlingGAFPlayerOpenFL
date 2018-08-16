@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<!-- NMML reference: https://gist.github.com/1763850 -->
+	
+	<!-- metadata, make sure 'package' is at least 3 segments (ie. com.mycompany.myproject) -->
+	<meta title="SimpleGame" package="com.test.SimpleGame" version="1.0.0" company="andrew" />
+	
+	<!-- output -->
+	<app main="Main" file="SimpleGame" path="bin" />
+	
+	<window background="#FEFEFE" fps="60" />
+	<window width="768" height="1024" unless="mobile" />
+	<window orientation="portrait" vsync="false" antialiasing="0" if="cpp" />
+	
+	<!-- classpath, haxe libs -->
+	<source path="src" />
+	<haxelib name="openfl" />
+	<haxelib name="zip" />
+	<haxelib name="starling" version="1.8.14" />
+	
+	<!-- additional -->
+	<classpath name="../../src/" />
+	
+	<!-- assets -->
+	<icon path="assets/openfl.svg" />
+	<assets path="assets/assets" rename="assets" embed="false" />
+	
+	<!-- optimize output
+	<haxeflag name="-dce full" /> -->
+	
+</project>
