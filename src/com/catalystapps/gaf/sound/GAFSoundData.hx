@@ -14,7 +14,8 @@ import haxe.Constraints.Function;
  */
 class GAFSoundData
 {
-    public var hasSoundsToLoad(get, never) : Bool;
+	@:allow(com.catalystapps.gaf)
+    private var hasSoundsToLoad(get, never) : Bool;
 
     private var onFail : Function;
     private var onSuccess : Function;
@@ -31,7 +32,8 @@ class GAFSoundData
         return null;
     }
     
-    public function addSound(soundData : CSound, swfName : String, soundBytes : ByteArray) : Void
+	@:allow(com.catalystapps.gaf)
+    private function addSound(soundData : CSound, swfName : String, soundBytes : ByteArray) : Void
     {
         var sound : Sound = new Sound();
         if (soundBytes != null)
@@ -66,7 +68,8 @@ class GAFSoundData
         }
     }
     
-    public function getSound(soundID : Int, swfName : String) : Sound
+	@:allow(com.catalystapps.gaf)
+    private function getSound(soundID : Int, swfName : String) : Sound
     {
         if (this._sounds != null)
         {
@@ -75,14 +78,16 @@ class GAFSoundData
         return null;
     }
     
-    public function loadSounds(onSuccess : Function, onFail : Function) : Void
+	@:allow(com.catalystapps.gaf)
+    private function loadSounds(onSuccess : Function, onFail : Function) : Void
     {
         this.onSuccess = onSuccess;
         this.onFail = onFail;
         this.loadSound();
     }
     
-    public function dispose() : Void
+	@:allow(com.catalystapps.gaf)
+    private function dispose() : Void
     {
         for (sound in this._sounds)
         {

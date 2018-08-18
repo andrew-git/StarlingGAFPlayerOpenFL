@@ -129,6 +129,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
     private var _pivotChanged : Bool;
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private var __debugOriginalAlpha : Float = Math.NaN;
     
     private var _orientationChanged : Bool;
@@ -1302,6 +1303,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
     }
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private function __debugHighlight() : Void
     {
         if (Math.isNaN(this.__debugOriginalAlpha))
@@ -1312,6 +1314,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
     }
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private function __debugLowlight() : Void
     {
         if (Math.isNaN(this.__debugOriginalAlpha))
@@ -1322,6 +1325,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
     }
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private function __debugResetLight() : Void
     {
         if (!Math.isNaN(this.__debugOriginalAlpha))

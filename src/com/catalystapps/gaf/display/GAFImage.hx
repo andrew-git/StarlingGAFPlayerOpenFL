@@ -48,6 +48,7 @@ class GAFImage extends Image implements IGAFImage implements IMaxSize implements
     private var _pivotChanged : Bool;
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private var __debugOriginalAlpha : Float = Math.NaN;
     
     private var _orientationChanged : Bool;
@@ -205,6 +206,7 @@ class GAFImage extends Image implements IGAFImage implements IMaxSize implements
     //--------------------------------------------------------------------------
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private function __debugHighlight() : Void
     {
         if (Math.isNaN(this.__debugOriginalAlpha))
@@ -215,6 +217,7 @@ class GAFImage extends Image implements IGAFImage implements IMaxSize implements
     }
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private function __debugLowlight() : Void
     {
         if (Math.isNaN(this.__debugOriginalAlpha))
@@ -225,6 +228,7 @@ class GAFImage extends Image implements IGAFImage implements IMaxSize implements
     }
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private function __debugResetLight() : Void
     {
         if (!Math.isNaN(this.__debugOriginalAlpha))

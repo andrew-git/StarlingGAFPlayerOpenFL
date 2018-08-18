@@ -58,6 +58,7 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
     private var _csf : Float = Math.NaN;
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private var __debugOriginalAlpha : Float = Math.NaN;
     
     private var _orientationChanged : Bool;
@@ -291,6 +292,7 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
     }
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private function __debugHighlight() : Void
     {
         if (Math.isNaN(this.__debugOriginalAlpha))
@@ -301,6 +303,7 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
     }
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private function __debugLowlight() : Void
     {
         if (Math.isNaN(this.__debugOriginalAlpha))
@@ -311,6 +314,7 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
     }
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private function __debugResetLight() : Void
     {
         if (!Math.isNaN(this.__debugOriginalAlpha))
@@ -321,9 +325,7 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
     }
     
     /** @private */
-    @:meta(Inline())
-
-    @:final private function updateTransformMatrix() : Void
+    @:final inline private function updateTransformMatrix() : Void
     {
         if (this._orientationChanged)
         {

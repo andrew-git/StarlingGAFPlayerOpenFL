@@ -159,6 +159,7 @@ class GAFBundle
     /**
 	 * @private
 	 */
+	@:allow(com.catalystapps.gaf)
     private function getGAFTimelineBySWFNameAndID(swfName : String, id : String) : GAFTimeline
     {
         var gafTimeline : GAFTimeline = null;
@@ -174,7 +175,8 @@ class GAFBundle
     /**
 	 * @private
 	 */
-    public function addGAFAsset(gafAsset : GAFAsset) : Void
+	@:allow(com.catalystapps.gaf)
+    private function addGAFAsset(gafAsset : GAFAsset) : Void
     {
         if (this._gafAssetsDictionary.get(gafAsset.id) == null)
         {

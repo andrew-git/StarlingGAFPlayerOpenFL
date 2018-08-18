@@ -205,7 +205,7 @@ class ZipToGAFAssetConverter extends EventDispatcher
         }
         
         //if (Std.is(data, ByteArray))
-		if(cast(data, ByteArray) != null)
+		if(data != null && cast(data, ByteArray) != null)
         {
 			var zipOk:Bool = true;
 			try
@@ -249,7 +249,7 @@ class ZipToGAFAssetConverter extends EventDispatcher
             }
         }
 /*
-        else if (Std.is(data, Array) || Type.getClassName(data) == "flash.filesystem::File")
+        else if (data != null && (Std.is(data, Array) || Type.getClassName(data) == "flash.filesystem::File"))
         {
             this._gafAssetsConfigURLs = [];
             
@@ -277,7 +277,7 @@ class ZipToGAFAssetConverter extends EventDispatcher
         }
 */
         //else if (Std.is(data, Dynamic) && data.configs && data.atlases)
-        else if (Reflect.hasField(data, "configs") && Reflect.hasField(data, "atlases"))
+        else if (data != null && (Reflect.hasField(data, "configs") && Reflect.hasField(data, "atlases")))
         {
             this.parseObject(data);
         }
@@ -590,7 +590,7 @@ class ZipToGAFAssetConverter extends EventDispatcher
                     var pngSize : Point = FileUtils.getPNGBASize(pngBA);
                     taGFX = new TAGFXSourcePNGBA(pngBA, pngSize, this.textureFormat);
                     this._taGFXs.set(fileName, taGFX);
-					trace("parseZip : png", pngSize, pngBA.length);
+					//trace("parseZip : png", pngSize, pngBA.length);
 /*
                 case ".atf":
                     fileName = fileName.substring(fileName.lastIndexOf("/") + 1, fileName.toLowerCase().lastIndexOf(".atf")) + ".png";
@@ -600,7 +600,7 @@ class ZipToGAFAssetConverter extends EventDispatcher
                 case ".gaf":
                     this._gafAssetsIDs.push(fileName);
                     this._gafAssetConfigSources.set(fileName, zipFile);
-					trace("parseZip : gaf");
+					//trace("parseZip : gaf");
                 case ".json":
                     this.zipProcessError(ErrorConstants.UNSUPPORTED_JSON);
                 case ".mp3", ".wav":

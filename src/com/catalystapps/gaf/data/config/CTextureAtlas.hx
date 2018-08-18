@@ -111,8 +111,8 @@ class CTextureAtlas
     //  PRIVATE METHODS
     //
     //--------------------------------------------------------------------------
-    
-    public function getTextureByIDAndAtlasID(id : String, atlasID : String) : Texture
+    @:allow(com.catalystapps.gaf)
+    private function getTextureByIDAndAtlasID(id : String, atlasID : String) : Texture
     {
 		/*
         var textureAtlas : TextureAtlas = this._textureAtlasesDictionary.get(atlasID);

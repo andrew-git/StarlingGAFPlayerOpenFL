@@ -80,7 +80,8 @@ class GAFSoundManager
 	 * @param soundOptions
 	 * @param swfName
 	 */
-    public function play(sound : Sound, soundID : Int, soundOptions : Dynamic, swfName : String) : Void
+	@:allow(com.catalystapps.gaf)
+    private function play(sound : Sound, soundID : Int, soundOptions : Dynamic, swfName : String) : Void
     {
         if (Reflect.field(soundOptions, "continue") != null
             && soundChannels != null
@@ -113,7 +114,8 @@ class GAFSoundManager
 	 * @param soundID
 	 * @param swfName
 	 */
-    public function stop(soundID : Int, swfName : String) : Void
+	@:allow(com.catalystapps.gaf)
+    private function stop(soundID : Int, swfName : String) : Void
     {
         if (soundChannels != null
             && soundChannels.get(swfName) != null

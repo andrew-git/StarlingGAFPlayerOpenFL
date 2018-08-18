@@ -565,6 +565,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
         return this._debugColors != null;
     }
     
+	@:allow(com.catalystapps.gaf)
     private function __debugHighlight() : Void
     {
         if (Math.isNaN(this.__debugOriginalAlpha))
@@ -574,6 +575,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
         this.alpha = 1;
     }
     
+	@:allow(com.catalystapps.gaf)
     private function __debugLowlight() : Void
     {
         if (Math.isNaN(this.__debugOriginalAlpha))
@@ -583,6 +585,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
         this.alpha = .05;
     }
     
+	@:allow(com.catalystapps.gaf)
     private function __debugResetLight() : Void
     {
         if (!Math.isNaN(this.__debugOriginalAlpha))

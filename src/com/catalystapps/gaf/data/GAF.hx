@@ -5,7 +5,8 @@ package com.catalystapps.gaf.data;
  */
 class GAF
 {
-    public static var maxAlpha(get, never) : Float;
+	@:allow(com.catalystapps.gaf)
+    private static var maxAlpha(get, never) : Float;
 
     /**
 	 * Optimize draw calls when animation contain mixed objects with alpha &lt; 1 and with alpha = 1.
@@ -27,6 +28,7 @@ class GAF
     public static var useMipMaps : Bool = false;
     
     /** @private */
+	@:allow(com.catalystapps.gaf)
     private static var useDeviceFonts : Bool = false;
     
     /** @private */

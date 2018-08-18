@@ -128,7 +128,8 @@ class GAFAsset
 	 * @param id internal timeline id
 	 * @return <code>GAFTimeline</code> from gaf asset
 	 */
-    public function getGAFTimelineByID(id : String) : GAFTimeline
+	@:allow(com.catalystapps.gaf)
+    private function getGAFTimelineByID(id : String) : GAFTimeline
     {
         return this._timelinesDictionary.get(id);
     }
@@ -144,7 +145,8 @@ class GAFAsset
         return this._timelinesByLinkage.get(linkage);
     }
 */
-    public function getCustomRegion(linkage : String, scale : Null<Float> = null, csf : Null<Float> = null) : IGAFTexture
+	@:allow(com.catalystapps.gaf)
+    private function getCustomRegion(linkage : String, scale : Null<Float> = null, csf : Null<Float> = null) : IGAFTexture
     {
         if (scale == null)
         {
@@ -202,7 +204,8 @@ class GAFAsset
     }
     
     /** @private */
-    public function getValidScale(value : Null<Float>) : Null<Float>
+	@:allow(com.catalystapps.gaf)
+    private function getValidScale(value : Null<Float>) : Null<Float>
     {
         var index : Int = MathUtility.getItemIndex(this._config.scaleValues, value);
         if (index != -1)
@@ -213,7 +216,8 @@ class GAFAsset
     }
     
     /** @private */
-    public function hasCSF(value : Float) : Bool
+	@:allow(com.catalystapps.gaf)
+    private function hasCSF(value : Float) : Bool
     {
         return MathUtility.getItemIndex(this._config.csfValues, value) >= 0;
     }
