@@ -5,7 +5,6 @@ package com.catalystapps.gaf.utils;
 
 import com.catalystapps.gaf.data.GAF;
 import com.catalystapps.gaf.data.config.CAnimationFrameInstance;
-import flash.errors.Error;
 
 /**
  * @private
@@ -122,11 +121,12 @@ class DebugUtility
         {
             cast((obj), FakeClass);
         }
-        catch (e : Error)
+        catch (e : Dynamic)
         {
-            //memoryHash = Std.string(e).replace(new as3hx.Compat.Regex('.*([@|\\$].*?) to .*$', "gi"), "$1");
 			//_TODO check later
-            memoryHash = Std.string(e);
+            //memoryHash = Std.string(e);
+			var pattern:EReg = ~/.*([@|\$].*?) to .*$/gi;
+			memoryHash = pattern.replace(Std.string(e), '$1');
         }
         
         return memoryHash;

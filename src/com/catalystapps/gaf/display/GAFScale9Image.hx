@@ -246,8 +246,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
 				//we were already validating, and something else told us to
                 //validate. that's bad.
 				
-                //this._validationQueue.addControl(this, true);
-                this._validationQueue.addControl(this);
+                this._validationQueue.addControl(this, true);
             }
             return;
         }
@@ -539,8 +538,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
         {
             return;
         }
-        //this._validationQueue.addControl(this, false);
-        this._validationQueue.addControl(this);
+        this._validationQueue.addControl(this, false);
     }
     
     private function setDebugColor(idx : Int) : Void
@@ -825,8 +823,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
         this._validationQueue = ValidationQueue.forStarling(Starling.current);
         if (this._isInvalid)
         {
-            //this._validationQueue.addControl(this, false);
-            this._validationQueue.addControl(this);
+            this._validationQueue.addControl(this, false);
         }
     }
     

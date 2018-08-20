@@ -7,27 +7,25 @@ accordance with the terms of the accompanying license agreement.
 */
 package feathers.core;
 
-import haxe.Constraints.Function;
-import flash.utils.Dictionary;
 import haxe.ds.ArraySort;
 import haxe.ds.WeakMap;
 import starling.animation.IAnimatable;
 import starling.core.Starling;
 
-@:meta(ExcludeClass())
+//@:meta(ExcludeClass())
 
 /**
-	 * @private
-	 *
-	 * @productversion Feathers 1.0.0
-	 */
+ * @private
+ *
+ * @productversion Feathers 1.0.0
+ */
 @:final class ValidationQueue implements IAnimatable
 {
     public var isValidating(get, never) : Bool;
 
     /**
-		 * @private
-		 */
+	 * @private
+	 */
     //private static var STARLING_TO_VALIDATION_QUEUE : Dictionary = new Dictionary(true);
 #if flash
 	private static var STARLING_TO_VALIDATION_QUEUE : WeakMap<Starling, ValidationQueue> = new WeakMap();
@@ -36,10 +34,10 @@ import starling.core.Starling;
 #end
     
     /**
-		 * Gets the validation queue for the specified Starling instance. If
-		 * a validation queue does not exist for the specified Starling
-		 * instance, a new one will be created.
-		 */
+	 * Gets the validation queue for the specified Starling instance. If
+	 * a validation queue does not exist for the specified Starling
+	 * instance, a new one will be created.
+	 */
     public static function forStarling(starling : Starling) : ValidationQueue
     {
         if (starling == null)
@@ -56,8 +54,8 @@ import starling.core.Starling;
     }
     
     /**
-		 * Constructor.
-		 */
+	 * Constructor.
+	 */
     public function new(starling : Starling)
     {
         this._starling = starling;
@@ -68,26 +66,27 @@ import starling.core.Starling;
     private var _isValidating : Bool = false;
     
     /**
-		 * If true, the queue is currently validating.
-		 *
-		 * <p>In the following example, we check if the queue is currently validating:</p>
-		 *
-		 * <listing version="3.0">
-		 * if( queue.isValidating )
-		 * {
-		 *     // do something
-		 * }</listing>
-		 */
+	 * If true, the queue is currently validating.
+	 *
+	 * <p>In the following example, we check if the queue is currently validating:</p>
+	 *
+	 * <listing version="3.0">
+	 * if( queue.isValidating )
+	 * {
+	 *     // do something
+	 * }</listing>
+	 */
     private function get_isValidating() : Bool
     {
         return this._isValidating;
     }
     
+	private var _delayedQueue:Array<IValidating> = [];
     private var _queue : Array<IValidating> = [];
     
     /**
-		 * Disposes the validation queue.
-		 */
+	 * Disposes the validation queue.
+	 */
     public function dispose() : Void
     {
         if (this._starling != null)
@@ -98,22 +97,24 @@ import starling.core.Starling;
     }
     
     /**
-		 * Adds a validating component to the queue.
-		 */
-    public function addControl(control : IValidating) : Void
+	 * Adds a validating component to the queue.
+	 */
+	// in new feathers delayIfValidating = false
+    public function addControl(control : IValidating, delayIfValidating : Bool) : Void
     {
 		//if the juggler was purged, we need to add the queue back in.
         if (!this._starling.juggler.contains(this))
         {
             this._starling.juggler.add(this);
         }
-        if (this._queue.indexOf(control) >= 0)
+		var currentQueue:Array<IValidating> = (this._isValidating && delayIfValidating) ? this._delayedQueue : this._queue;
+		if(currentQueue.indexOf(control) >= 0)
 		{
 			//already queued
             return;
         }
-        var queueLength : Int = this._queue.length;
-        if (this._isValidating)
+		var queueLength:Int = currentQueue.length;
+		if(this._isValidating && currentQueue == this._queue)
         {
 			//special case: we need to keep it sorted
             var depth : Int = control.depth;
@@ -125,7 +126,7 @@ import starling.core.Starling;
             var i : Int = queueLength - 1;
             while (i >= 0)
             {
-                var otherControl : IValidating = _queue[i];
+				var otherControl:IValidating = currentQueue[i];
                 var otherDepth : Int = otherControl.depth;
                 //we can skip the overhead of calling queueSortFunction and
                 //of looking up the value we've already stored in the depth
@@ -139,20 +140,27 @@ import starling.core.Starling;
             //add one because we're going after the last item we checked
             //if we made it through all of them, i will be -1, and we want 0
             i++;
-            //this._queue.insertAt(i, control);
-			this._queue.insert(i, control);
+			if(i == queueLength)
+			{
+				currentQueue[queueLength] = control;
+			}
+			else
+			{
+				currentQueue.insert(i, control);
+			}
         }
         else
         {
 			//faster than push() because push() creates a temporary rest
             //Array that needs to be garbage collected
             this._queue[queueLength] = control;
+			currentQueue[queueLength] = control;
         }
     }
     
     /**
-		 * @private
-		 */
+	 * @private
+	 */
     public function advanceTime(time : Float) : Void
     {
         if (this._isValidating || !this._starling.contextValid)
@@ -187,14 +195,17 @@ import starling.core.Starling;
             }
             item.validate();
         }
+		var temp:Array<IValidating> = this._queue;
+		this._queue = this._delayedQueue;
+		this._delayedQueue = temp;
+		
         this._isValidating = false;
     }
     
     /**
-		 * @private
-		 * This is a static constant to avoid a MethodClosure allocation on iOS
-		 */
-    //private static var queueSortFunction : Function = function(first : IValidating, second : IValidating) : Int
+	 * @private
+	 * This is a static constant to avoid a MethodClosure allocation on iOS
+	 */
     function queueSortFunction(first : IValidating, second : IValidating) : Int
 	{
 		var difference : Int = second.depth - first.depth;
@@ -207,5 +218,5 @@ import starling.core.Starling;
 			return 1;
 		}
 		return 0;
-	};
+	}
 }
