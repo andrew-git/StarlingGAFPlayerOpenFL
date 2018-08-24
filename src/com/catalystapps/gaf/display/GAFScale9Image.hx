@@ -12,6 +12,7 @@ import com.catalystapps.gaf.filter.GAFFilter;
 import com.catalystapps.gaf.utils.MathUtility;
 import feathers.core.IValidating;
 import feathers.core.ValidationQueue;
+import feathers.utils.display.DisplayUtils;
 import flash.errors.IllegalOperationError;
 import flash.geom.Matrix;
 import flash.geom.Point;
@@ -26,6 +27,7 @@ import starling.textures.Texture;
 import starling.textures.TextureSmoothing;
 import starling.utils.MatrixUtil;
 
+/*
 @:meta(Exclude(name="numChildren",kind="property"))
 
 @:meta(Exclude(name="isFlattened",kind="property"))
@@ -62,7 +64,8 @@ import starling.utils.MatrixUtil;
 
 @:meta(Exclude(name="flatten",kind="method"))
 
-@:meta(Exclude(name="unflatten",kind="method"))
+@:meta(Exclude(name = "unflatten", kind = "method"))
+*/
 
 /**
  * @private
@@ -819,7 +822,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
     
     private function addedToStageHandler(event : Event) : Void
     {
-        this._depth = getDisplayObjectDepthFromStage(this);
+        this._depth = DisplayUtils.getDisplayObjectDepthFromStage(this);
         this._validationQueue = ValidationQueue.forStarling(Starling.current);
         if (this._isInvalid)
         {
@@ -1030,21 +1033,4 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
         
         return HELPER_MATRIX;
     }
-	
-	//import feathers.utils.display.getDisplayObjectDepthFromStage;
-	inline
-	function getDisplayObjectDepthFromStage(target:DisplayObject):Int
-	{
-		if(target.stage == null)
-		{
-			return -1;
-		}
-		var count:Int = 0;
-		while(target.parent != null)
-		{
-			target = target.parent;
-			count++;
-		}
-		return count;
-	}
 }
