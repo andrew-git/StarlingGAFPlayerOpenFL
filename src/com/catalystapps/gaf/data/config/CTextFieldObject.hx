@@ -39,8 +39,8 @@ class CTextFieldObject
     //--------------------------------------------------------------------------
     
     private var _id : String;
-    private var _width : Float;
-    private var _height : Float;
+    private var _width : Float = Math.NaN;
+    private var _height : Float = Math.NaN;
     private var _text : String;
     private var _embedFonts : Bool;
     private var _multiline : Bool;

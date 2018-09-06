@@ -205,7 +205,7 @@ class ZipToGAFAssetConverter extends EventDispatcher
         }
         
         //if (Std.is(data, ByteArray))
-		if(data != null && cast(data, ByteArray) != null)
+		if(data != null && (try cast(data, ByteArray) catch(e:Dynamic) null) != null)
         {
 			var zipOk:Bool = true;
 			try
@@ -245,7 +245,7 @@ class ZipToGAFAssetConverter extends EventDispatcher
             
             if (!ZipToGAFAssetConverter.keepZipInRAM)
             {
-                (try cast(data, ByteArray) catch(e:Dynamic) null).clear();
+                cast(data, ByteArray).clear();
             }
         }
 /*

@@ -258,7 +258,7 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
         {
             if (Std.is(this.textEditor, GAFTextFieldTextEditor))
             {
-                (cast(this.textEditor, GAFTextFieldTextEditor).setFilterConfig(this._filterConfig, this._filterScale);
+                cast(this.textEditor, GAFTextFieldTextEditor).setFilterConfig(this._filterConfig, this._filterScale);
             }
             else if (this._filterConfig && !Math.isNaN(this._filterScale))
             {

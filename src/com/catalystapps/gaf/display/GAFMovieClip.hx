@@ -870,12 +870,12 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
 		*/
 		if (Std.is(_frame, Int) && ((frame = _frame) > 0))
 		{
-            if (frame > this._totalFrames)
-            {
-                frame = this._totalFrames;
-            }			
+			if (frame > this._totalFrames)
+			{
+				frame = this._totalFrames;
+			}
 		}
-        else if (Std.is(frame, String))
+        else if (Std.is(_frame, String))
         {
             var label : String = _frame;
             frame = this._config.animationSequences.getStartFrameNo(label);
