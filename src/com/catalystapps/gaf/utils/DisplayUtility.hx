@@ -16,12 +16,14 @@ class DisplayUtility
             var filterMinY : Float = 0;
             var filterGeneratorRect : Rectangle = new Rectangle(0, 0, maxRect.width, maxRect.height);
             var bitmapData : BitmapData;
+			var filterRect : Rectangle;
+			
             for (i in 0...filtersLen)
 			{
 				//bitmapData = new BitmapData(filterGeneratorRect.width, filterGeneratorRect.height, true, 0x00000000);
                 bitmapData = new BitmapData(1, 1, false, 0x00000000);
                 var filter : BitmapFilter = filters[i];
-                var filterRect : Rectangle = bitmapData.generateFilterRect(filterGeneratorRect, filter);
+                filterRect = bitmapData.generateFilterRect(filterGeneratorRect, filter);
                 filterRect.width += filterGeneratorRect.width - 1;
                 filterRect.height += filterGeneratorRect.height - 1;
                 
@@ -43,9 +45,4 @@ class DisplayUtility
         
         return maxRect;
     }
-
-    public function new()
-    {
-    }
 }
-

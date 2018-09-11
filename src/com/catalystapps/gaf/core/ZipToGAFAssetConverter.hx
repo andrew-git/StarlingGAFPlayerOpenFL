@@ -328,7 +328,7 @@ class ZipToGAFAssetConverter extends EventDispatcher
         {
             this._gafAssetsIDs.push(configObj.name);
             
-            var ba : ByteArray = try cast(configObj.config, ByteArray) catch(e:Dynamic) null;
+            var ba : ByteArray = cast(configObj.config, ByteArray);
             ba.position = 0;
             
             if (configObj.type == "gaf")
@@ -854,7 +854,7 @@ class ZipToGAFAssetConverter extends EventDispatcher
     
     private function onConfigLoadComplete(event : Event) : Void
     {
-        var loader : URLLoader = try cast(event.target, URLLoader) catch(e:Dynamic) null;
+        var loader : URLLoader = cast(event.target, URLLoader);
         var url : String = this._gafAssetsConfigURLs[this._gafAssetsConfigIndex];
         
         this.removeLoaderListeners(loader, onConfigLoadComplete, onConfigIOError);

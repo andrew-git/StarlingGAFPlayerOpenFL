@@ -107,12 +107,12 @@ class GAFFilter extends FragmentFilter
             
             if (Std.is(filterConfig, CBlurFilterData))
             {
-                updateBlurFilter(try cast(filterConfig, CBlurFilterData) catch(e:Dynamic) null);
+                updateBlurFilter(cast(filterConfig, CBlurFilterData));
                 blurUpdated = true;
             }
             else if (Std.is(filterConfig, CColorMatrixFilterData))
             {
-                updateColorMatrixFilter(try cast(filterConfig, CColorMatrixFilterData) catch(e:Dynamic) null);
+                updateColorMatrixFilter(cast(filterConfig, CColorMatrixFilterData));
                 ctmUpdated = true;
             }
         }

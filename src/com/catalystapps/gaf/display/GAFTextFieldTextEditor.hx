@@ -16,6 +16,7 @@ import flash.display3D.Context3DProfile;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import flash.text.TextFormat;
+import openfl.filters.BitmapFilter;
 import starling.core.Starling;
 import starling.display.Image;
 import starling.textures.ConcreteTexture;
@@ -25,12 +26,12 @@ import starling.utils.GetNextPowerOfTwo;
 /** @private */
 class GAFTextFieldTextEditor extends TextFieldTextEditor
 {
-    /**
-		 * @private
-		 */
+	/**
+	 * @private
+	 */
     private static var HELPER_MATRIX : Matrix = new Matrix();
     
-    private var _filters : Array<Dynamic>;
+    private var _filters : Array<BitmapFilter>;
     private var _scale : Float;
     private var _csf : Float;
     
@@ -55,10 +56,10 @@ class GAFTextFieldTextEditor extends TextFieldTextEditor
     /** @private */
     public function setFilterConfig(value : CFilter, scale : Float = 1) : Void
     {
-        var filters : Array<Dynamic> = [];
+        var filters : Array<BitmapFilter> = [];
         if (value != null)
         {
-            for (filter/* AS3HX WARNING could not determine type for var: filter exp: EField(EIdent(value),filterConfigs) type: null */ in value.filterConfigs)
+            for (filter in value.filterConfigs)
             {
                 filters.push(FiltersUtility.getNativeFilter(filter, scale * this._csf));
             }
@@ -86,9 +87,9 @@ class GAFTextFieldTextEditor extends TextFieldTextEditor
         }
     }
     
-    /**
-		 * @private
-		 */
+	/**
+	 * @private
+	 */
     override private function refreshSnapshotParameters() : Void
     {
         this._textFieldOffsetX = 0;
@@ -116,9 +117,9 @@ class GAFTextFieldTextEditor extends TextFieldTextEditor
         this._snapshotClipRect.y = 0;
     }
     
-    /**
-		 * @private
-		 */
+	/**
+	 * @private
+	 */
     override private function positionSnapshot() : Void
     {
         if (!this.textSnapshot)
@@ -130,9 +131,9 @@ class GAFTextFieldTextEditor extends TextFieldTextEditor
         this.textSnapshot.y = this._textFieldOffsetY / this._scale / this._csf;
     }
     
-    /**
-		 * @private
-		 */
+	/**
+	 * @private
+	 */
     override private function checkIfNewSnapshotIsNeeded() : Void
     {
         var canUseRectangleTexture : Bool = Starling.current.profile != Context3DProfile.BASELINE_CONSTRAINED;
@@ -152,9 +153,9 @@ class GAFTextFieldTextEditor extends TextFieldTextEditor
                 this._snapshotWidth != textureRoot.width || this._snapshotHeight != textureRoot.height;
     }
     
-    /**
-		 * @private
-		 */
+	/**
+	 * @private
+	 */
     override private function texture_onRestore() : Void
     {
         if (this.textSnapshot && this.textSnapshot.texture &&
@@ -170,9 +171,9 @@ class GAFTextFieldTextEditor extends TextFieldTextEditor
         }
     }
     
-    /**
-		 * @private
-		 */
+	/**
+	 * @private
+	 */
     override private function refreshSnapshot() : Void
     {
         if (this._snapshotWidth <= 0 || this._snapshotHeight <= 0)
@@ -243,4 +244,3 @@ class GAFTextFieldTextEditor extends TextFieldTextEditor
         return value;
     }
 }
-

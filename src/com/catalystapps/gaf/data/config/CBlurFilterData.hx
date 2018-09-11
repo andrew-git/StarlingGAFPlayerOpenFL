@@ -1,20 +1,19 @@
 package com.catalystapps.gaf.data.config;
 
-
 /**
-	 * @private
-	 */
+ * @private
+ */
 class CBlurFilterData implements ICFilterData
 {
-    public var blurX : Float;
-    public var blurY : Float;
-    public var color : Int;
+    public var blurX : Float = Math.NaN;
+    public var blurY : Float = Math.NaN;
+    public var color : Int = 0;
     public var angle : Float = 0;
     public var distance : Float = 0;
     public var strength : Float = 0;
     public var alpha : Float = 1;
-    public var inner : Bool;
-    public var knockout : Bool;
+    public var inner : Bool = false;
+    public var knockout : Bool = false;
     public var resolution : Float = 1;
     
     public function clone() : ICFilterData

@@ -2,8 +2,8 @@ package com.catalystapps.gaf.data.config;
 
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class CAnimationSequences
 {
     public var sequences(get, never) : Array<CAnimationSequence>;
@@ -74,7 +74,7 @@ class CAnimationSequences
     {
         var result : Int = 0;
         
-        for (sequence/* AS3HX WARNING could not determine type for var: sequence exp: EField(EIdent(this),_sequences) type: null */ in this._sequences)
+        for (sequence in this._sequences)
         {
             if (sequence.id == sequenceID)
             {
@@ -87,7 +87,7 @@ class CAnimationSequences
     
     public function getSequenceByID(id : String) : CAnimationSequence
     {
-        for (sequence/* AS3HX WARNING could not determine type for var: sequence exp: EField(EIdent(this),_sequences) type: null */ in this._sequences)
+        for (sequence in this._sequences)
         {
             if (sequence.id == id)
             {
@@ -142,4 +142,3 @@ class CAnimationSequences
         return this._sequences;
     }
 }
-

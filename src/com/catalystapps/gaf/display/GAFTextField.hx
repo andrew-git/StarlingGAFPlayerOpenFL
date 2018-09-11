@@ -1,29 +1,39 @@
+//Base temporary GAFTextField replacement Feathers TextInput with Sprite and Starling TextField
 /**
  * Created by Nazar on 17.03.2014.
  */
 package com.catalystapps.gaf.display;
 
-import com.catalystapps.gaf.data.GAF;
 import com.catalystapps.gaf.data.config.CFilter;
 import com.catalystapps.gaf.data.config.CTextFieldObject;
 import com.catalystapps.gaf.filter.GAFFilter;
 import com.catalystapps.gaf.utils.DebugUtility;
-import feathers.controls.TextInput;
-import feathers.controls.text.TextFieldTextEditor;
-import feathers.core.ITextEditor;
 import flash.errors.ArgumentError;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.text.TextFormat;
 import starling.display.Image;
+import starling.display.Sprite;
+import starling.text.TextField;
 import starling.textures.Texture;
+import starling.utils.VAlign;
+
+
+/*
+import com.catalystapps.gaf.data.GAF;
+import feathers.controls.TextInput;
+import feathers.controls.text.TextFieldTextEditor;
+import feathers.core.ITextEditor;
+*/
+
 
 /**
  * GAFTextField is a text entry control that extends functionality of the <code>feathers.controls.TextInput</code>
  * for the GAF library needs.
  * All dynamic text fields (including input text fields) in GAF library are instances of the GAFTextField.
  */
-class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize implements IGAFDisplayObject
+//class GAFTextFieldDummy extends TextInput implements IGAFDebug implements IMaxSize implements IGAFDisplayObject
+class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize implements IGAFDisplayObject
 {
     public var debugColors(never, set) : Array<Int>;
     public var pivotMatrix(get, never) : Matrix;
@@ -64,6 +74,13 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
     private var _orientationChanged : Bool;
     
     private var _config : CTextFieldObject = null;
+	
+	
+	static public var useTempTextField : Bool = true;
+	private var tempTF : TextField;
+	
+	public var text(never, set) : String;
+	public var color(never, set) : Int;
     
     //--------------------------------------------------------------------------
     //
@@ -109,12 +126,15 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
             this.height = config.height;
         }
         
+		
+/*
         this.text = config.text;
         this.restrict = config.restrict;
         this.isEditable = config.editable;
         this.isEnabled = this.isEditable || config.selectable;  // editable text must be selectable anyway  
         this.displayAsPassword = config.displayAsPassword;
         this.maxChars = config.maxChars;
+		
         this.verticalAlign = TextInput.VERTICAL_ALIGN_TOP;
         
         this.textEditorProperties.textFormat = cloneTextFormat(config.textFormat);
@@ -125,11 +145,41 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
 		{
 			return new GAFTextFieldTextEditor(_scale, _csf);
 		};
-        
+/*/
+		if (useTempTextField)
+		{
+			tempTF = new TextField(Std.int(config.width), Std.int(config.height), config.text, 
+									config.textFormat.font, config.textFormat.size, config.textFormat.color, config.textFormat.bold);
+			addChild(tempTF);
+			
+			tempTF.vAlign = VAlign.TOP;
+		}
+//*/
+		
         this.invalidateSize();
         
         this._config = config;
     }
+	
+	function set_text(value : String) : String
+	{
+		if (useTempTextField)
+		{
+			tempTF.text = value;
+		}
+		
+		return value;
+	}
+	
+	function set_color(value : Int) : Int
+	{
+		if (useTempTextField)
+		{
+			tempTF.color = value;
+		}
+		
+		return value;
+	}
     
     //--------------------------------------------------------------------------
     //
@@ -146,7 +196,9 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
         clone.alpha = this.alpha;
         clone.visible = this.visible;
         clone.transformationMatrix = this.transformationMatrix;
+/*
         clone.textEditorFactory = this.textEditorFactory;
+*/
         clone.setFilterConfig(_filterConfig, _filterScale);
         
         return clone;
@@ -158,11 +210,13 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
 	 */
     public function invalidateSize() : Void
     {
+/*
         if (this.textEditor != null && Std.is(this.textEditor, TextFieldTextEditor))
         {
             cast(this.textEditor, TextFieldTextEditor).invalidate(INVALIDATION_FLAG_SIZE);
         }
         this.invalidate(INVALIDATION_FLAG_SIZE);
+*/
     }
     
     /** @private */
@@ -220,8 +274,9 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
                 bgImage.setVertexAlpha(2, (value[2] >>> 24) / 255);
                 bgImage.setVertexAlpha(3, (value[3] >>> 24) / 255);
         }
-        
+/*      
         this.backgroundSkin = bgImage;
+*/
         return value;
     }
     
@@ -254,6 +309,7 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
     /** @private */
     private function applyFilter() : Void
     {
+/*
         if (this.textEditor)
         {
             if (Std.is(this.textEditor, GAFTextFieldTextEditor))
@@ -289,6 +345,41 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
                 this.filter = null;
             }
         }
+*/
+		if (useTempTextField)
+		{
+			if (tempTF != null)
+			{
+				if (this._filterConfig != null && !Math.isNaN(this._filterScale))
+				{
+					var gafFilter : GAFFilter;
+					if (this.filter != null)
+					{
+						if (Std.is(this.filter, GAFFilter))
+						{
+							gafFilter = cast(this.filter, GAFFilter);
+						}
+						else
+						{
+							this.filter.dispose();
+							gafFilter = new GAFFilter();
+						}
+					}
+					else
+					{
+						gafFilter = new GAFFilter();
+					}
+					
+					gafFilter.setConfig(this._filterConfig, this._filterScale);
+					this.filter = gafFilter;
+				}
+				else if (this.filter != null)
+				{
+					this.filter.dispose();
+					this.filter = null;
+				}
+			}
+		}
     }
     
     /** @private */
@@ -341,12 +432,14 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
     //--------------------------------------------------------------------------
     
     /** @private */
+/*
     override private function createTextEditor() : Void
     {
         super.createTextEditor();
         
         this.applyFilter();
     }
+*/
     
     /** @private */
     override public function dispose() : Void
@@ -474,9 +567,11 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
 	 */
     private function get_textWidth() : Float
     {
+/*
         this.validate();
         this.textEditor.measureText(HELPER_POINT);
-        
+*/
+		
         return HELPER_POINT.x;
     }
     
@@ -486,9 +581,11 @@ class GAFTextField extends TextInput implements IGAFDebug implements IMaxSize im
 	 */
     private function get_textHeight() : Float
     {
+/*
         this.validate();
         this.textEditor.measureText(HELPER_POINT);
-        
+*/
+		
         return HELPER_POINT.y;
     }
     

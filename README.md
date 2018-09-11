@@ -10,7 +10,9 @@ OpenFL Starling 2.xx may require small fixes
 Works for flash and html5 targets (others not checked, but could work)
 
 Support work with zip files and nested movies (see demo)
-Not implemented ATF and TextField support in GAF, Sound not checked, but should work
+Added base GAFTextField implementation, if work don't satisfy disable with GAFTextField.useTempTextField = false;
+
+Not implemented ATF support in GAF, Sound not checked, but should work
 
 # Dependencies
 zip library https://github.com/starburst997/haxe-zip

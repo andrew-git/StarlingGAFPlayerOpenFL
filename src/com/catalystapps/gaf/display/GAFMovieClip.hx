@@ -12,7 +12,9 @@ import com.catalystapps.gaf.data.config.CAnimationSequence;
 import com.catalystapps.gaf.data.config.CFilter;
 import com.catalystapps.gaf.data.config.CFrameAction;
 import com.catalystapps.gaf.data.config.CSound;
+import com.catalystapps.gaf.data.config.CTextFieldObject;
 import com.catalystapps.gaf.data.config.CTextureAtlas;
+import com.catalystapps.gaf.display.GAFTextField;
 import com.catalystapps.gaf.filter.GAFFilter;
 import com.catalystapps.gaf.utils.DebugUtility;
 import flash.errors.ArgumentError;
@@ -34,14 +36,16 @@ import starling.display.Sprite;
 import starling.events.Event;
 import starling.textures.TextureSmoothing;
 
-/** Dispatched when playhead reached first frame of sequence */
+/*
+// Dispatched when playhead reached first frame of sequence
 @:meta(Event(name="typeSequenceStart",type="starling.events.Event"))
 
-/** Dispatched when playhead reached end frame of sequence */
+// Dispatched when playhead reached end frame of sequence
 @:meta(Event(name="typeSequenceEnd",type="starling.events.Event"))
 
-/** Dispatched whenever the movie has displayed its last frame. */
+// Dispatched whenever the movie has displayed its last frame.
 @:meta(Event(name="complete",type="starling.events.Event"))
+*/
 
 /**
  * GAFMovieClip represents animation display object that is ready to be used in Starling display list. It has
@@ -224,7 +228,8 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
             var maskInstance : CAnimationFrameInstance = frameConfig.getInstanceByID(id);
             if (maskInstance != null)
             {
-                getTransformMatrix(try cast(maskObject, IGAFDisplayObject) catch(e:Dynamic) null, HELPER_MATRIX);
+                //getTransformMatrix(try cast(maskObject, IGAFDisplayObject) catch(e:Dynamic) null, HELPER_MATRIX);
+                getTransformMatrix(maskObject, HELPER_MATRIX);
                 maskInstance.applyTransformMatrix(maskObject.transformationMatrix, HELPER_MATRIX, this._scale);
                 maskObject.invalidateOrientation();
             }
@@ -708,8 +713,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
             var child : DisplayObjectContainer;
             var childMC : GAFMovieClip;
             var childMask : GAFPixelMaskDisplayObject;
-            var i : Int = 0;
-            while (i < this.numChildren)
+            for (i in 0...this.numChildren)
             {
                 //child = try cast(this.getChildAt(i), DisplayObjectContainer) catch(e:Dynamic) null;
 				if (Std.is(this.getChildAt(i), DisplayObjectContainer))
@@ -717,7 +721,8 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
 					child = cast(this.getChildAt(i), DisplayObjectContainer);
 					if (Std.is(child, GAFMovieClip))
 					{
-						childMC = try cast(child, GAFMovieClip) catch(e:Dynamic) null;
+						//childMC = try cast(child, GAFMovieClip) catch(e:Dynamic) null;
+						childMC = cast(child, GAFMovieClip);
 						if (calledByUser)
 						{
 							childMC.stop(true);
@@ -729,11 +734,12 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
 					}
 					else if (Std.is(child, GAFPixelMaskDisplayObject))
 					{
-						childMask = (try cast(child, GAFPixelMaskDisplayObject) catch(e:Dynamic) null);
-						var m : Int = 0;
-						while (m < childMask.numChildren)
+						//childMask = (try cast(child, GAFPixelMaskDisplayObject) catch(e:Dynamic) null);
+						childMask = cast(child, GAFPixelMaskDisplayObject);
+						for (m in 0...childMask.numChildren)
 						{
-							childMC = try cast(childMask.getChildAt(m), GAFMovieClip) catch(e:Dynamic) null;
+							//childMC = try cast(childMask.getChildAt(m), GAFMovieClip) catch(e:Dynamic) null;
+							childMC = cast(childMask.getChildAt(m), GAFMovieClip);
 							if (childMC != null)
 							{
 								if (calledByUser)
@@ -745,22 +751,20 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
 									childMC._stop(true);
 								}
 							}
-							m++;
 						}
 						if (Std.is(childMask.pixelMask, GAFMovieClip))
 						{
 							if (calledByUser)
 							{
-								(try cast(childMask.pixelMask, GAFMovieClip) catch(e:Dynamic) null).stop(true);
+								cast(childMask.pixelMask, GAFMovieClip).stop(true);
 							}
 							else
 							{
-								(try cast(childMask.pixelMask, GAFMovieClip) catch(e:Dynamic) null)._stop(true);
+								cast(childMask.pixelMask, GAFMovieClip)._stop(true);
 							}
 						}
 					}
 				}
-                i++;
             }
         }
     }
@@ -1009,7 +1013,8 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
                             pixelMaskObject = this._pixelMasksDictionary[instance.maskID];
                             if (pixelMaskObject != null)
                             {
-                                pixelMaskObject.addChild(try cast(displayObject, DisplayObject) catch(e:Dynamic) null);
+                                //pixelMaskObject.addChild(try cast(displayObject, DisplayObject) catch(e:Dynamic) null);
+                                pixelMaskObject.addChild(cast(displayObject, DisplayObject));
                                 maskIndex++;
                                 
                                 instance.applyTransformMatrix(displayObject.transformationMatrix, objectPivotMatrix, this._scale);
@@ -1036,7 +1041,8 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
 							displayObject.invalidateOrientation();
 							displayObject.setFilterConfig(instance.filter, this._scale);
 							
-							this.addChild(try cast(displayObject, DisplayObject) catch(e:Dynamic) null);
+							//this.addChild(try cast(displayObject, DisplayObject) catch(e:Dynamic) null);
+							this.addChild(cast(displayObject, DisplayObject));
                         }
                         
                         if (mc != null && mc._started)
@@ -1199,15 +1205,12 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
                     else
                     {
                         displayObject = new GAFImage(texture);
-                        (try cast(displayObject, GAFImage) catch(e:Dynamic) null).smoothing = this._smoothing;
+                        cast(displayObject, GAFImage).smoothing = this._smoothing;
                     }
 					
-//_TODO TYPE_TEXTFIELD later
-/*
                 case CAnimationObject.TYPE_TEXTFIELD:
                     var tfObj : CTextFieldObject = this._config.textFields.textFieldObjectsDictionary[animationObjectConfig.regionID];
                     displayObject = new GAFTextField(tfObj, this._scale, this._contentScaleFactor);
-*/
 					
                 case CAnimationObject.TYPE_TIMELINE:
                     var timeline : GAFTimeline = gafAsset.getGAFTimelineByID(animationObjectConfig.regionID);
@@ -1260,14 +1263,17 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
         else
         {
             this._displayObjectsDictionary.set(id, displayObject);
-            this._displayObjectsVector[_displayObjectsVector.length] = try cast(displayObject, IGAFDisplayObject) catch(e:Dynamic) null;
+            //this._displayObjectsVector[_displayObjectsVector.length] = try cast(displayObject, IGAFDisplayObject) catch(e:Dynamic) null;
+            this._displayObjectsVector[_displayObjectsVector.length] = cast(displayObject, IGAFDisplayObject);
             if (Std.is(displayObject, IGAFImage))
             {
-                this._imagesVector[_imagesVector.length] = try cast(displayObject, IGAFImage) catch(e:Dynamic) null;
+                //this._imagesVector[_imagesVector.length] = try cast(displayObject, IGAFImage) catch(e:Dynamic) null;
+                this._imagesVector[_imagesVector.length] = cast(displayObject, IGAFImage);
             }
             else if (Std.is(displayObject, GAFMovieClip))
             {
-                this._mcVector[_mcVector.length] = try cast(displayObject, GAFMovieClip) catch(e:Dynamic) null;
+                //this._mcVector[_mcVector.length] = try cast(displayObject, GAFMovieClip) catch(e:Dynamic) null;
+                this._mcVector[_mcVector.length] = cast(displayObject, GAFMovieClip);
             }
         }
     }
@@ -1435,7 +1441,8 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
         {
             if (this._displayObjectsVector[i].name == name)
             {
-                return try cast(this._displayObjectsVector[i], DisplayObject) catch(e:Dynamic) null;
+                //return try cast(this._displayObjectsVector[i], DisplayObject) catch(e:Dynamic) null;
+                return cast(this._displayObjectsVector[i], DisplayObject);
             }
         }
         

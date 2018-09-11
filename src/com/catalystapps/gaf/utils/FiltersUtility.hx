@@ -62,7 +62,14 @@ class FiltersUtility
         {
             
 			var cmFilterData : CColorMatrixFilterData = cast(data, CColorMatrixFilterData);
-			nativeFilter = new ColorMatrixFilter([].concat(cmFilterData.matrix));
+			
+			//nativeFilter = new ColorMatrixFilter([].concat(cmFilterData.matrix));
+			var arr : Array<Float> = [];
+			for (i in 0...cmFilterData.matrix.length) 
+			{
+				arr.push(cmFilterData.matrix[i]);
+			}
+			nativeFilter = new ColorMatrixFilter(arr);
         }
         
         return nativeFilter;
