@@ -76,6 +76,7 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
     private var _config : CTextFieldObject = null;
 	
 	
+	static public var useFlatten : Bool = true;
 	static public var useTempTextField : Bool = true;
 	private var tempTF : TextField;
 	
@@ -153,6 +154,8 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 			addChild(tempTF);
 			
 			tempTF.vAlign = VAlign.TOP;
+			
+			if(useFlatten) this.flatten();
 		}
 //*/
 		
@@ -165,7 +168,11 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 	{
 		if (useTempTextField)
 		{
+			if(useFlatten) this.unflatten();
+			
 			tempTF.text = value;
+			
+			if(useFlatten) this.flatten();
 		}
 		
 		return value;
@@ -175,7 +182,11 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 	{
 		if (useTempTextField)
 		{
+			if(useFlatten) this.unflatten();
+			
 			tempTF.color = value;
+			
+			if(useFlatten) this.flatten();
 		}
 		
 		return value;
@@ -350,18 +361,20 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 		{
 			if (tempTF != null)
 			{
+				if(useFlatten) this.unflatten();
+				
 				if (this._filterConfig != null && !Math.isNaN(this._filterScale))
 				{
 					var gafFilter : GAFFilter;
-					if (this.filter != null)
+					if (tempTF.filter != null)
 					{
-						if (Std.is(this.filter, GAFFilter))
+						if (Std.is(tempTF.filter, GAFFilter))
 						{
-							gafFilter = cast(this.filter, GAFFilter);
+							gafFilter = cast(tempTF.filter, GAFFilter);
 						}
 						else
 						{
-							this.filter.dispose();
+							tempTF.filter.dispose();
 							gafFilter = new GAFFilter();
 						}
 					}
@@ -371,13 +384,15 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 					}
 					
 					gafFilter.setConfig(this._filterConfig, this._filterScale);
-					this.filter = gafFilter;
+					tempTF.filter = gafFilter;
 				}
-				else if (this.filter != null)
+				else if (tempTF.filter != null)
 				{
-					this.filter.dispose();
-					this.filter = null;
+					tempTF.filter.dispose();
+					tempTF.filter = null;
 				}
+				
+				if(useFlatten) this.flatten();
 			}
 		}
     }
