@@ -38,19 +38,22 @@ class GAFSoundManager
     {
         this.volume = volume;
         
-        var channels : Array<GAFSoundChannel>;
-        for (swfName in soundChannels.keys())
-        {
-            for (soundID in soundChannels.get(swfName).keys())
-            {
-                channels = soundChannels.get(swfName).get(soundID);
-				
-				for (i in 0...channels.length) 
+		if (soundChannels != null)
+		{
+			var channels : Array<GAFSoundChannel>;
+			for (swfName in soundChannels.keys())
+			{
+				for (soundID in soundChannels.get(swfName).keys())
 				{
-                    channels[i].soundChannel.soundTransform = new SoundTransform(volume);
-                }
-            }
-        }
+					channels = soundChannels.get(swfName).get(soundID);
+					
+					for (i in 0...channels.length) 
+					{
+						channels[i].soundChannel.soundTransform = new SoundTransform(volume);
+					}
+				}
+			}
+		}
     }
     
     /**
@@ -58,19 +61,22 @@ class GAFSoundManager
 	 */
     public function stopAll() : Void
     {
-        var channels : Array<GAFSoundChannel>;
-		for (swfName in soundChannels.keys())
-        {
-			for (soundID in soundChannels.get(swfName).keys())
-            {
-				channels = soundChannels.get(swfName).get(soundID);
-				for (i in 0...channels.length) 
+		if (soundChannels != null)
+		{
+			var channels : Array<GAFSoundChannel>;
+			for (swfName in soundChannels.keys())
+			{
+				for (soundID in soundChannels.get(swfName).keys())
 				{
-                    channels[i].stop();
-                }
-            }
-        }
-        soundChannels = null;
+					channels = soundChannels.get(swfName).get(soundID);
+					for (i in 0...channels.length) 
+					{
+						channels[i].stop();
+					}
+				}
+			}
+			soundChannels = null;
+		}
     }
     
     /**

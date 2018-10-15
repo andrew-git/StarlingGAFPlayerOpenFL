@@ -89,20 +89,23 @@ class GAFSoundData
 	@:allow(com.catalystapps.gaf)
     private function dispose() : Void
     {
-        for (sound in this._sounds)
-        {
-			if (Std.is(sound, Sound))
+		if (this._sounds != null)
+		{
+			for (sound in this._sounds)
 			{
-				cast(sound, Sound).close();
-			}
-			else
-			{
-				for (soundName in Reflect.fields(sound)) 
+				if (Std.is(sound, Sound))
 				{
-					cast(Reflect.field(sound, soundName), Sound).close();
+					cast(sound, Sound).close();
+				}
+				else
+				{
+					for (soundName in Reflect.fields(sound)) 
+					{
+						cast(Reflect.field(sound, soundName), Sound).close();
+					}
 				}
 			}
-        }
+		}
     }
     
     private function loadSound() : Void
