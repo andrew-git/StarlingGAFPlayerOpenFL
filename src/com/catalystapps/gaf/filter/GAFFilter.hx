@@ -39,7 +39,7 @@ class GAFFilter extends FragmentFilter
     private static inline var TINTED_PROGRAM_NAME : String = "BF_t";
     private static inline var COLOR_TRANSFORM_PROGRAM_NAME : String = "CMF";
     private var MAX_SIGMA(default, never) : Float = 2.0;
-    private static var IDENTITY : Vector<Float> = Vector.ofArray([1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0]);
+    private static var IDENTITY : Vector<Float> = Vector.ofArray([1.0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0]);
     private static var MIN_COLOR : Vector<Float> = Vector.ofArray([0, 0, 0, 0.0001]);
     
     private var mNormalProgram : Program3D;
@@ -48,9 +48,9 @@ class GAFFilter extends FragmentFilter
     private var cShaderMatrix : Vector<Float> = new Vector<Float>(20, true);
     private var cShaderProgram : Program3D;
     
-    private var mOffsets : Vector<Float> = Vector.ofArray([0, 0, 0, 0]);
-    private var mWeights : Vector<Float> = Vector.ofArray([0, 0, 0, 0]);
-    private var mColor : Vector<Float> = Vector.ofArray([1, 1, 1, 1]);
+    private var mOffsets : Vector<Float> = Vector.ofArray([0.0, 0, 0, 0]);
+    private var mWeights : Vector<Float> = Vector.ofArray([0.0, 0, 0, 0]);
+    private var mColor : Vector<Float>   = Vector.ofArray([1.0, 1, 1, 1]);
     
     private var mBlurX : Float = 0;
     private var mBlurY : Float = 0;

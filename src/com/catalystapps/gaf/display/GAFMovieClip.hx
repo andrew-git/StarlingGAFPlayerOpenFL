@@ -237,7 +237,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
             ////////////////////////////////
             
             var cFilter : CFilter = new CFilter();
-            var cmf : Vector<Float> = Vector.ofArray([1, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]);
+            var cmf : Vector<Float> = Vector.ofArray([1.0, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]);
             cmf.fixed = true;
             cFilter.addColorMatrixFilter(cmf);
             
