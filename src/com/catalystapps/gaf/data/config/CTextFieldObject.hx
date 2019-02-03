@@ -45,7 +45,7 @@ class CTextFieldObject
     private var _embedFonts : Bool;
     private var _multiline : Bool;
     private var _wordWrap : Bool;
-    private var _restrict : String;
+    private var _restrictt : String;
     private var _editable : Bool;
     private var _selectable : Bool;
     private var _displayAsPassword : Bool;
@@ -198,12 +198,12 @@ class CTextFieldObject
     
     private function get_restrict() : String
     {
-        return this._restrict;
+        return this._restrictt;
     }
     
     private function set_restrict(value : String) : String
     {
-        this._restrict = value;
+        this._restrictt = value;
         return value;
     }
     

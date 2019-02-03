@@ -97,17 +97,17 @@ class DebugUtility
         return retVal;
     }
     
-    private static function getHP(_P : Array<Int>, rot : Int, aryNum : Int, nextNum : Int) : Int
+    private static function getHP(_p : Array<Int>, rot : Int, aryNum : Int, nextNum : Int) : Int
     {
         var retVal : Int;
         var aryC : Int;
         var nextC : Int;
         var rH : Int;
         var rotR : Float;
-        aryC = _P[aryNum];
-        nextC = _P[nextNum];
+        aryC = _p[aryNum];
+        nextC = _p[nextNum];
         rotR = (aryC + nextC) / 60 * (rot - 60 * aryNum);
-        rH = Std.int(((_P[nextNum] == 0)) ? aryC - rotR : aryC + rotR);
+        rH = Std.int((_p[nextNum] == 0) ? aryC - rotR : aryC + rotR);
         retVal = Math.round(Math.min(255, Math.abs(rH)));
 		
         return retVal;
