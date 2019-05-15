@@ -44,8 +44,8 @@ class BinGAFAssetConfigConverter extends EventDispatcher
     public var config(get, never) : GAFAssetConfig;
     public var assetID(get, never) : String;
     public var ignoreSounds(never, set) : Bool;
-    public var defaultScale(never, set) : Float;
-    public var defaultCSF(never, set) : Float;
+    public var defaultScale(never, set) : Null<Float>;
+    public var defaultCSF(never, set) : Null<Float>;
 
     private static inline var SIGNATURE_GAF : Int = 0x00474146;
     private static inline var SIGNATURE_GAC : Int = 0x00474143;
@@ -1234,13 +1234,13 @@ class BinGAFAssetConfigConverter extends EventDispatcher
         }
     }
     
-    private function set_defaultScale(defaultScale : Float) : Float
+    private function set_defaultScale(defaultScale : Null<Float>) : Null<Float>
     {
         _defaultScale = defaultScale;
         return defaultScale;
     }
     
-    private function set_defaultCSF(csf : Float) : Float
+    private function set_defaultCSF(csf : Null<Float>) : Null<Float>
     {
         _defaultContentScaleFactor = csf;
         return csf;
