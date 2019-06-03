@@ -844,7 +844,8 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
 							}
 							if (_sw2_ >= 2)
 							{
-								bubbles = cast(action.params[1], Bool);
+								//bubbles = cast(action.params[1], Bool);
+								bubbles = (action.params[1] != null && action.params[1] != "");
 							}
 							
                             this.dispatchEventWith(actionType, bubbles, data);
