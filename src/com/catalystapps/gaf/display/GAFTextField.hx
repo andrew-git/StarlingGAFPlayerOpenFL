@@ -56,14 +56,14 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
     private static var HELPER_POINT : Point = new Point();
     private static var HELPER_MATRIX : Matrix = new Matrix();
     
-    private var _pivotMatrix : Matrix;
+    private var _pivotMatrix : Matrix = null;
     
-    private var _filterConfig : CFilter;
+    private var _filterConfig : CFilter = null;
     private var _filterScale : Float = Math.NaN;
     
-    private var _maxSize : Point;
+    private var _maxSize : Point = null;
     
-    private var _pivotChanged : Bool;
+    private var _pivotChanged : Bool = false;
     private var _scale : Float = Math.NaN;
     private var _csf : Float = Math.NaN;
     
@@ -71,17 +71,18 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 	@:allow(com.catalystapps.gaf)
     private var __debugOriginalAlpha : Float = Math.NaN;
     
-    private var _orientationChanged : Bool;
+    private var _orientationChanged : Bool = false;
     
     private var _config : CTextFieldObject = null;
 	
 	
 	static public var useFlatten : Bool = true;
 	static public var useTempTextField : Bool = true;
-	private var tempTF : TextField;
+	private var tempTF : TextField = null;
 	
 	public var text(never, set) : String;
 	public var color(never, set) : Int;
+	public var hAlign(get, set):String;
     
     //--------------------------------------------------------------------------
     //
@@ -151,9 +152,19 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 		{
 			tempTF = new TextField(Std.int(config.width), Std.int(config.height), config.text, 
 									config.textFormat.font, config.textFormat.size, config.textFormat.color, config.textFormat.bold);
+				
 			addChild(tempTF);
 			
 			tempTF.vAlign = VAlign.TOP;
+			
+			if (starling.utils.HAlign.isValid(config.textFormat.align))
+			{
+				tempTF.hAlign = config.textFormat.align;
+			}
+			tempTF.italic = config.textFormat.italic;
+			tempTF.leading = config.textFormat.leading;
+			tempTF.underline = config.textFormat.underline;
+			
 			
 			if(useFlatten) this.flatten();
 		}
@@ -163,6 +174,23 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
         
         this._config = config;
     }
+	
+    //--------------------------------------------------------------------------
+    //
+    //  GETTERS AND SETTERS EXTENDED
+    //
+    //--------------------------------------------------------------------------
+	
+	function get_hAlign():String 
+	{
+		if (useTempTextField)
+		{
+			return tempTF.hAlign;
+		}
+		
+		return null;
+	}
+	
 	
 	function set_text(value : String) : String
 	{
@@ -191,6 +219,20 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 		
 		return value;
 	}
+	
+    function set_hAlign(value:String):String
+    {
+		if (useTempTextField)
+		{
+			if(useFlatten) this.unflatten();
+			
+			tempTF.hAlign = value;
+			
+			if(useFlatten) this.flatten();
+		}
+		
+		return value;
+    }
     
     //--------------------------------------------------------------------------
     //
