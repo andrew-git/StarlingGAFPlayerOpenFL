@@ -1,7 +1,7 @@
 package com.catalystapps.gaf.display;
 
 import com.catalystapps.gaf.data.config.CFilter;
-import com.catalystapps.gaf.filter.GAFFilter;
+import com.catalystapps.gaf.filter.GAFFilterChain;
 import flash.geom.Matrix;
 import flash.geom.Matrix3D;
 import flash.geom.Point;
@@ -33,25 +33,28 @@ class GAFImage extends Image implements IGAFImage implements IMaxSize implements
     //
     //--------------------------------------------------------------------------
     
+    private static inline var V_DATA_ATTR : String = "position";
+    
     private static var HELPER_POINT : Point = new Point();
     private static var HELPER_POINT_3D : Vector3D = new Vector3D();
     private static var HELPER_MATRIX : Matrix = new Matrix();
     private static var HELPER_MATRIX_3D : Matrix3D = new Matrix3D();
     
-    private var _assetTexture : IGAFTexture;
+    private var _assetTexture : IGAFTexture = null;
     
-    private var _filterConfig : CFilter;
+    private var _filterChain : GAFFilterChain = null;
+    private var _filterConfig : CFilter = null;
     private var _filterScale : Float = Math.NaN;
     
-    private var _maxSize : Point;
+    private var _maxSize : Point = null;
     
-    private var _pivotChanged : Bool;
+    private var _pivotChanged : Bool = false;
     
     /** @private */
 	@:allow(com.catalystapps.gaf)
     private var __debugOriginalAlpha : Float = Math.NaN;
     
-    private var _orientationChanged : Bool;
+    private var _orientationChanged : Bool = false;
     
     //--------------------------------------------------------------------------
     //
@@ -165,26 +168,18 @@ class GAFImage extends Image implements IGAFImage implements IMaxSize implements
             {
                 this._filterConfig = value;
                 this._filterScale = scale;
-                var gafFilter : GAFFilter;
-                if (this.filter != null)
+                if (this._filterChain != null)
                 {
-                    if (Std.is(this.filter, GAFFilter))
-                    {
-                        gafFilter = try cast(this.filter, GAFFilter) catch(e:Dynamic) null;
-                    }
-                    else
-                    {
-                        this.filter.dispose();
-                        gafFilter = new GAFFilter();
-                    }
+                    _filterChain.dispose();
                 }
                 else
                 {
-                    gafFilter = new GAFFilter();
+                    _filterChain = new GAFFilterChain();
                 }
                 
-                gafFilter.setConfig(this._filterConfig, this._filterScale);
-                this.filter = gafFilter;
+                _filterChain.setFilterData(_filterConfig);
+                
+                this.filter = _filterChain;
             }
             else
             {
@@ -193,6 +188,8 @@ class GAFImage extends Image implements IGAFImage implements IMaxSize implements
                     this.filter.dispose();
                     this.filter = null;
                 }
+                
+                this._filterChain = null;
                 this._filterConfig = null;
                 this._filterScale = Math.NaN;
             }
@@ -278,14 +275,14 @@ class GAFImage extends Image implements IGAFImage implements IMaxSize implements
         
         if (targetSpace == this) // optimization
 		{
-            mVertexData.getPosition(3, HELPER_POINT);
+            vertexData.getPoint(3, V_DATA_ATTR, HELPER_POINT);
             resultRect.setTo(0.0, 0.0, HELPER_POINT.x, HELPER_POINT.y);
         }
         else if (targetSpace == parent && rotation == 0.0 && isEquivalent(skewX, skewY))// optimization
 		{
 			var scaleX : Float = this.scaleX;
 			var scaleY : Float = this.scaleY;
-			mVertexData.getPosition(3, HELPER_POINT);
+            vertexData.getPoint(3, V_DATA_ATTR, HELPER_POINT);
 			resultRect.setTo(x - pivotX * scaleX, y - pivotY * scaleY, 
 					HELPER_POINT.x * scaleX, HELPER_POINT.y * scaleY
             );
@@ -303,12 +300,12 @@ class GAFImage extends Image implements IGAFImage implements IMaxSize implements
         {
             stage.getCameraPosition(targetSpace, HELPER_POINT_3D);
             getTransformationMatrix3D(targetSpace, HELPER_MATRIX_3D);
-            mVertexData.getBoundsProjected(HELPER_MATRIX_3D, HELPER_POINT_3D, 0, 4, resultRect);
+            vertexData.getBoundsProjected(V_DATA_ATTR, HELPER_MATRIX_3D, HELPER_POINT_3D, 0, 4, resultRect);
         }
         else
         {
             getTransformationMatrix(targetSpace, HELPER_MATRIX);
-            mVertexData.getBounds(HELPER_MATRIX, 0, 4, resultRect);
+            vertexData.getBounds(V_DATA_ATTR, HELPER_MATRIX, 0, 4, resultRect);
         }
         
         return resultRect;

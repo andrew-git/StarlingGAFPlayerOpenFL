@@ -66,5 +66,5 @@ interface IFeathersEventDispatcher
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/events/EventDispatcher.html#hasEventListener() Full description of starling.events.EventDispatcher.hasEventListener() in Gamua's Starling Framework API Reference
 	 */
-    function hasEventListener(type : String) : Bool;
+    function hasEventListener(type : String, listener : Function = null) : Bool;
 }

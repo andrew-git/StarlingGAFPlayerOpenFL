@@ -5,6 +5,7 @@ package com.catalystapps.gaf.data.tagfx;
 
 import com.catalystapps.gaf.data.GAF;
 import flash.display.BitmapData;
+import starling.textures.ConcreteTexture;
 import starling.textures.Texture;
 
 /**
@@ -70,7 +71,7 @@ class TAGFXSourceBitmapData extends TAGFXBase
                 cast(this._source, BitmapData).dispose();
             }
             
-            this._texture.root.onRestore = function() : Void
+            this._texture.root.onRestore = function(concreteTexture : ConcreteTexture) : Void
 			{
 				_isReady = false;
 				_texture.root.uploadBitmapData(_source);

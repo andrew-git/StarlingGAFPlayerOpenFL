@@ -1,18 +1,19 @@
-# Starling GAF Player OpenFL
+# GAF Player OpenFL Starling 2.xx version
 
 OpenFL port of latest Starling GAF Player (https://github.com/CatalystApps/StarlingGAFPlayer)
 
 Done with help of as3hx (https://github.com/HaxeFoundation/as3hx)
 
-Work with OpenFL Starling 1.8 branch (https://github.com/openfl/starling/tree/v1.8)
-OpenFL Starling 2.xx may require small fixes
-
-Works for flash and html5 targets (others not checked, but could work)
+Works with OpenFL Starling 2.xx (https://github.com/openfl/starling) for flash and html5 targets (others not checked, but should work)
 
 Support work with zip files and nested movies (see demo)
-Added base GAFTextField implementation, if work don't satisfy disable with GAFTextField.useTempTextField = false;
+
+Added GAFTextField implementation without Feathers, if work don't satisfy disable with GAFTextField.useTextField = false;
+GAFTextField uses OpenFL TextField and filters to behave similar to flash version.
+For using Starling TextField and filters set GAFTextField.usePreciseFlashTextField = false; (could have different visual appearence)
 
 Not implemented ATF support in GAF, Sound not checked, but should work
 
 # Dependencies
 zip library https://github.com/starburst997/haxe-zip
+haxe format library (needed for zip library)

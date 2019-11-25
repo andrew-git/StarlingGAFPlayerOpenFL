@@ -21,7 +21,7 @@ import starling.core.Starling;
 import starling.display.Image;
 import starling.textures.ConcreteTexture;
 import starling.textures.Texture;
-import starling.utils.GetNextPowerOfTwo;
+import starling.utils.MathUtil;
 
 /** @private */
 class GAFTextFieldTextEditor extends TextFieldTextEditor
@@ -144,8 +144,8 @@ class GAFTextFieldTextEditor extends TextFieldTextEditor
         }
         else
         {
-            this._snapshotWidth = getNextPowerOfTwo(this._snapshotClipRect.width);
-            this._snapshotHeight = getNextPowerOfTwo(this._snapshotClipRect.height);
+            this._snapshotWidth = MathUtil.getNextPowerOfTwo(this._snapshotClipRect.width);
+            this._snapshotHeight = MathUtil.getNextPowerOfTwo(this._snapshotClipRect.height);
         }
         var textureRoot : ConcreteTexture = (this.textSnapshot) ? this.textSnapshot.texture.root : null;
         this._needsNewTexture = this._needsNewTexture || !this.textSnapshot ||

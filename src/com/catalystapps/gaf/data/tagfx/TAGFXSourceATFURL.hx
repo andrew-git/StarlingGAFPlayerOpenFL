@@ -13,6 +13,7 @@ import flash.net.URLLoader;
 import flash.net.URLLoaderDataFormat;
 import flash.net.URLRequest;
 import flash.utils.ByteArray;
+import starling.textures.ConcreteTexture;
 import starling.textures.Texture;
 
 
@@ -114,7 +115,7 @@ class TAGFXSourceATFURL extends TAGFXBase
                             this._textureScale, this._textureFormat, false
                 );
             
-            this._texture.root.onRestore = function() : Void
+            this._texture.root.onRestore = function(concreteTexture : ConcreteTexture) : Void
                     {
                         _isReady = false;
                         loadATFData(_source);

@@ -6,17 +6,15 @@ package com.catalystapps.gaf.display;
 
 import com.catalystapps.gaf.data.config.CFilter;
 import com.catalystapps.gaf.data.config.CTextFieldObject;
-import com.catalystapps.gaf.filter.GAFFilter;
+import com.catalystapps.gaf.display.text.CustomTextField;
+import com.catalystapps.gaf.display.text.CustomTextFieldOpenFL;
+import com.catalystapps.gaf.display.text.CustomTextFieldStarling;
 import com.catalystapps.gaf.utils.DebugUtility;
-import flash.errors.ArgumentError;
-import flash.geom.Matrix;
-import flash.geom.Point;
-import flash.text.TextFormat;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
 import starling.display.Image;
 import starling.display.Sprite;
-import starling.text.TextField;
 import starling.textures.Texture;
-import starling.utils.VAlign;
 
 
 /*
@@ -58,6 +56,7 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
     
     private var _pivotMatrix : Matrix = null;
     
+///    private var _filterChain : GAFFilterChain = null;
     private var _filterConfig : CFilter = null;
     private var _filterScale : Float = Math.NaN;
     
@@ -76,9 +75,9 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
     private var _config : CTextFieldObject = null;
 	
 	
-	static public var useFlatten : Bool = true;
-	static public var useTempTextField : Bool = true;
-	private var tempTF : TextField = null;
+	static public var useTextField : Bool = true;
+	static public var usePreciseFlashTextField : Bool = true;
+	private var textField : CustomTextField = null;
 	
 	public var text(never, set) : String;
 	public var color(never, set) : Int;
@@ -147,28 +146,20 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 		{
 			return new GAFTextFieldTextEditor(_scale, _csf);
 		};
-/*/
-		if (useTempTextField)
+*/
+		
+		if (useTextField)
 		{
-			tempTF = new TextField(Std.int(config.width), Std.int(config.height), config.text, 
-									config.textFormat.font, config.textFormat.size, config.textFormat.color, config.textFormat.bold);
-				
-			addChild(tempTF);
-			
-			tempTF.vAlign = VAlign.TOP;
-			
-			if (starling.utils.HAlign.isValid(config.textFormat.align))
+			if (usePreciseFlashTextField)
 			{
-				tempTF.hAlign = config.textFormat.align;
+				textField = new CustomTextFieldOpenFL(this, config, scale, csf);
 			}
-			tempTF.italic = config.textFormat.italic;
-			tempTF.leading = config.textFormat.leading;
-			tempTF.underline = config.textFormat.underline;
-			
-			
-			if(useFlatten) this.flatten();
+			else
+			{
+				textField = new CustomTextFieldStarling(this, config, scale, csf);
+			}
 		}
-//*/
+		
 		
         this.invalidateSize();
         
@@ -183,9 +174,9 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 	
 	function get_hAlign():String 
 	{
-		if (useTempTextField)
+		if (useTextField)
 		{
-			return tempTF.hAlign;
+			return textField.hAlign;
 		}
 		
 		return null;
@@ -194,13 +185,9 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 	
 	function set_text(value : String) : String
 	{
-		if (useTempTextField)
+		if (useTextField)
 		{
-			if(useFlatten) this.unflatten();
-			
-			tempTF.text = value;
-			
-			if(useFlatten) this.flatten();
+			textField.text = value;
 		}
 		
 		return value;
@@ -208,27 +195,19 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
 	
 	function set_color(value : Int) : Int
 	{
-		if (useTempTextField)
+		if (useTextField)
 		{
-			if(useFlatten) this.unflatten();
-			
-			tempTF.color = value;
-			
-			if(useFlatten) this.flatten();
+			textField.color = value;
 		}
 		
 		return value;
 	}
 	
-    function set_hAlign(value:String):String
+    function set_hAlign(value : String):String
     {
-		if (useTempTextField)
+		if (useTextField)
 		{
-			if(useFlatten) this.unflatten();
-			
-			tempTF.hAlign = value;
-			
-			if(useFlatten) this.flatten();
+			textField.hAlign = value;
 		}
 		
 		return value;
@@ -281,7 +260,7 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
     /** @private */
     private function set_debugColors(value : Array<Int>) : Array<Int>
     {
-        var t : Texture = Texture.fromColor(1, 1, DebugUtility.RENDERING_NEUTRAL_COLOR, true);
+        var t : Texture = Texture.fromColor(1, 1, DebugUtility.RENDERING_NEUTRAL_COLOR, 1, true);
         var bgImage : Image = new Image(t);
         var alpha0 : Float;
         var alpha1 : Float;
@@ -371,71 +350,30 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
             }
             else if (this._filterConfig && !Math.isNaN(this._filterScale))
             {
-                var gafFilter : GAFFilter;
-                if (this.filter)
+                if (this._filterChain != null)
                 {
-                    if (Std.is(this.filter, GAFFilter))
-                    {
-                        gafFilter = cast(this.filter, GAFFilter);
-                    }
-                    else
-                    {
-                        this.filter.dispose();
-                        gafFilter = new GAFFilter();
-                    }
+                    _filterChain.dispose();
                 }
                 else
                 {
-                    gafFilter = new GAFFilter();
+                    _filterChain = new GAFFilterChain();
                 }
                 
-                gafFilter.setConfig(this._filterConfig, this._filterScale);
-                this.filter = gafFilter;
+                _filterChain.setFilterData(_filterConfig);
+                this.filter = _filterChain;
             }
             else if (this.filter)
             {
                 this.filter.dispose();
                 this.filter = null;
+				
+                this._filterChain = null;
             }
         }
 */
-		if (useTempTextField)
+		if (useTextField)
 		{
-			if (tempTF != null)
-			{
-				if(useFlatten) this.unflatten();
-				
-				if (this._filterConfig != null && !Math.isNaN(this._filterScale))
-				{
-					var gafFilter : GAFFilter;
-					if (tempTF.filter != null)
-					{
-						if (Std.is(tempTF.filter, GAFFilter))
-						{
-							gafFilter = cast(tempTF.filter, GAFFilter);
-						}
-						else
-						{
-							tempTF.filter.dispose();
-							gafFilter = new GAFFilter();
-						}
-					}
-					else
-					{
-						gafFilter = new GAFFilter();
-					}
-					
-					gafFilter.setConfig(this._filterConfig, this._filterScale);
-					tempTF.filter = gafFilter;
-				}
-				else if (tempTF.filter != null)
-				{
-					tempTF.filter.dispose();
-					tempTF.filter = null;
-				}
-				
-				if(useFlatten) this.flatten();
-			}
+			textField.applyFilter(_filterConfig, _filterScale);
 		}
     }
     
@@ -653,14 +591,15 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
     //--------------------------------------------------------------------------
     
     /** @private */
-    private function cloneTextFormat(textFormat : TextFormat) : TextFormat
+/*
+    private function cloneTextFormat(textFormat : openfl.text.TextFormat) : openfl.text.TextFormat
     {
         if (textFormat == null)
         {
             throw new ArgumentError("Argument \"textFormat\" must be not null.");
         }
         
-        var result : TextFormat = new TextFormat(
+        var result = new openfl.text.TextFormat(
         textFormat.font, 
         textFormat.size, 
         textFormat.color, 
@@ -677,4 +616,5 @@ class GAFTextField extends Sprite implements IGAFDebug implements IMaxSize imple
         
         return result;
     }
+*/
 }

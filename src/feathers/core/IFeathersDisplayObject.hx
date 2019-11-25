@@ -10,11 +10,11 @@ package feathers.core;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import starling.core.RenderSupport;
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
 import starling.display.Stage;
 import starling.filters.FragmentFilter;
+import starling.rendering.Painter;
 
 /**
  * Public properties and functions from <code>starling.display.DisplayObject</code>
@@ -30,6 +30,9 @@ import starling.filters.FragmentFilter;
  */
 interface IFeathersDisplayObject extends IFeathersEventDispatcher
 {
+    /**
+	 * @private
+	 */
     
     /**
 	 * The x, or horizontal, position of the display object in the parent's
@@ -40,12 +43,22 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
     var x(get, set) : Float;    
     
     /**
+	 * @private
+	 */
+    
+    
+    /**
 	 * The y, or vertical, position of the display object in the parent's
 	 * coordinate space.
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#y Full description of starling.display.DisplayObject.y in Gamua's Starling Framework API Reference
 	 */
     var y(get, set) : Float;    
+    
+    /**
+	 * @private
+	 */
+    
     
     /**
 	 * The width of the display object in the parent's coordinate space.
@@ -55,11 +68,21 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
     var width(get, set) : Float;    
     
     /**
+	 * @private
+	 */
+    
+    
+    /**
 	 * The height of the display object in the parent's coordinate space.
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#height Full description of starling.display.DisplayObject.height in Gamua's Starling Framework API Reference
 	 */
     var height(get, set) : Float;    
+    
+    /**
+	 * @private
+	 */
+    
     
     /**
 	 * The x coordinate of the display object's origin in its own coordinate
@@ -69,7 +92,12 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
 	 */
     var pivotX(get, set) : Float;    
     
-     /**
+    /**
+	 * @private
+	 */
+    
+    
+    /**
 	 * The y coordinate of the display object's origin in its own coordinate
 	 * space.
 	 *
@@ -89,11 +117,21 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
     var scaleX(get, set) : Float;    
     
     /**
+	 * @private
+	 */
+    
+    
+    /**
 	 * The vertical scale factor.
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#scaleY Full description of starling.display.DisplayObject.scaleY in Gamua's Starling Framework API Reference
 	 */
     var scaleY(get, set) : Float;    
+    
+    /**
+	 * @private
+	 */
+    
     
     /**
 	 * The horizontal skew, in radians.
@@ -102,12 +140,22 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
 	 */
     var skewX(get, set) : Float;    
     
-     /**
+    /**
+	 * @private
+	 */
+    
+    
+    /**
 	 * The vertical skew, in radians.
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#skewY Full description of starling.display.DisplayObject.skewY in Gamua's Starling Framework API Reference
 	 */
     var skewY(get, set) : Float;    
+    
+    /**
+	 * @private
+	 */
+    
     
     /**
 	 * The blend mode used when rendering the display object.
@@ -116,26 +164,46 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
 	 */
     var blendMode(get, set) : String;    
     
-     /**
+    /**
+	 * @private
+	 */
+    
+    
+    /**
 	 * The name of the display object.
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#name Full description of starling.display.DisplayObject.name in Gamua's Starling Framework API Reference
 	 */
     var name(get, set) : String;    
     
-     /**
+    /**
+	 * @private
+	 */
+    
+    
+    /**
 	 * Determines if the display object may be touched.
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#touchable Full description of starling.display.DisplayObject.touchable in Gamua's Starling Framework API Reference
 	 */
     var touchable(get, set) : Bool;    
     
-     /**
+    /**
+	 * @private
+	 */
+    
+    
+    /**
 	 * Determines the visibility of the display object.
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#visible Full description of starling.display.DisplayObject.visible in Gamua's Starling Framework API Reference
 	 */
     var visible(get, set) : Bool;    
+    
+    /**
+	 * @private
+	 */
+    
     
     /**
 	 * The opacity of the display object.
@@ -145,19 +213,28 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
     var alpha(get, set) : Float;    
     
     /**
+	 * @private
+	 */
+    
+    
+    /**
 	 * The rotation of the display object, in radians.
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#rotation Full description of starling.display.DisplayObject.rotation in Gamua's Starling Framework API Reference
 	 */
     var rotation(get, set) : Float;    
     
-     /**
+    /**
+	 * @private
+	 */
+    
+    
+    /**
 	 * The display object's mask.
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#mask Full description of starling.display.DisplayObject.mask in Gamua's Starling Framework API Reference
 	 */
-	//Not available at old feathers
-    //var mask(get, set) : DisplayObject;    
+    var mask(get, set) : DisplayObject;    
     
     /**
 	 * The display object's parent, or <code>null</code> if it doesn't have
@@ -189,20 +266,18 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
 	 */
     var stage(get, never) : Stage;    
     
-	/**
-	 * Determines if the display object should be rendered or not.
-	 *
-	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#hasVisibleArea Full description of starling.display.DisplayObject.hasVisibleArea in Gamua's Starling Framework API Reference
-	 */
-	var hasVisibleArea(get, never) : Bool;
-
     /**
 	 * The transformation matrix of the display object, relative to its
 	 * parent.
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#transformationMatrix Full description of starling.display.DisplayObject.transformationMatrix in Gamua's Starling Framework API Reference
 	 */
-    var transformationMatrix(get, never) : Matrix;
+    var transformationMatrix(get, never) : Matrix;    
+    
+    /**
+	 * @private
+	 */
+    
     
     /**
 	 * Determines if the mouse cursor should turn into a hand when the mouse
@@ -218,6 +293,11 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#bounds Full description of starling.display.DisplayObject.bounds in Gamua's Starling Framework API Reference
 	 */
     var bounds(get, never) : Rectangle;    
+    
+    /**
+	 * @private
+	 */
+    
     
     /**
 	 * The filter used when rendering the display object.
@@ -239,8 +319,7 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#hitTest() Full description of starling.display.DisplayObject.hitTest() in Gamua's Starling Framework API Reference
 	 */
-    //function hitTest(localPoint : Point) : DisplayObject;
-	function hitTest(localPoint : Point, forTouch : Bool = false) : DisplayObject;
+    function hitTest(localPoint : Point) : DisplayObject;
     
     /**
 	 * Converts a point from the display object's coordinate space to the
@@ -278,7 +357,7 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
 	 *
 	 * @see http://doc.starling-framework.org/core/starling/display/DisplayObject.html#render() Full description of starling.display.DisplayObject.render() in Gamua's Starling Framework API Reference
 	 */
-	function render(support:RenderSupport, parentAlpha:Float):Void;
+    function render(painter : Painter) : Void;
     
     /**
 	 * Disposes the display object.
@@ -287,3 +366,4 @@ interface IFeathersDisplayObject extends IFeathersEventDispatcher
 	 */
     function dispose() : Void;
 }
+

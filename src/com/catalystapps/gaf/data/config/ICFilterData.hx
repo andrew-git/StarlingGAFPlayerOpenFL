@@ -2,12 +2,10 @@ package com.catalystapps.gaf.data.config;
 
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 interface ICFilterData
 {
-
-    function clone() : ICFilterData
-    ;
+    function clone() : ICFilterData;
 }
 

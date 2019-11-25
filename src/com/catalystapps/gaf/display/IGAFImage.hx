@@ -12,7 +12,7 @@ interface IGAFImage extends IGAFDisplayObject
     
     var assetTexture(get, never) : IGAFTexture;    
     
-    var smoothing(get, set) : String;
+    var textureSmoothing(get, set) : String;
 
 }
 

@@ -5,6 +5,7 @@ package com.catalystapps.gaf.data.tagfx;
 
 import com.catalystapps.gaf.data.GAF;
 import flash.utils.ByteArray;
+import starling.textures.ConcreteTexture;
 import starling.textures.Texture;
 
 /**
@@ -61,10 +62,10 @@ class TAGFXSourceATFBA extends TAGFXBase
     
     override private function get_texture() : Texture
     {
-        if (!this._texture)
+        if (this._texture == null)
         {
             this._texture = Texture.fromAtfData(this._source, this._textureScale, GAF.useMipMaps, this.onTextureReady);
-            this._texture.root.onRestore = function() : Void
+            this._texture.root.onRestore = function(concreteTexture : ConcreteTexture) : Void
                     {
                         _isReady = false;
                         _texture.root.uploadAtfData(_source, 0, onTextureReady);

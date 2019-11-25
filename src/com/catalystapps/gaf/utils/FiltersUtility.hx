@@ -34,7 +34,8 @@ class FiltersUtility
 						blurFilterData.blurX * scale, 
 						blurFilterData.blurY * scale, 
 						blurFilterData.strength, 
-						BitmapFilterQuality.HIGH, 
+						//BitmapFilterQuality.HIGH, 
+						BitmapFilterQuality.MEDIUM, 
 						blurFilterData.inner, 
 						blurFilterData.knockout);
             }
@@ -46,7 +47,8 @@ class FiltersUtility
 						blurFilterData.blurX * scale, 
 						blurFilterData.blurY * scale, 
 						blurFilterData.strength, 
-						BitmapFilterQuality.HIGH, 
+						//BitmapFilterQuality.HIGH, 
+						BitmapFilterQuality.MEDIUM, 
 						blurFilterData.inner, 
 						blurFilterData.knockout);
             }
@@ -55,7 +57,8 @@ class FiltersUtility
 				nativeFilter = new BlurFilter(
 						blurFilterData.blurX * scale, 
 						blurFilterData.blurY * scale, 
-						BitmapFilterQuality.HIGH);
+						//BitmapFilterQuality.HIGH);
+						BitmapFilterQuality.MEDIUM);
             }
         }
         else //if (data is CColorMatrixFilterData)

@@ -10,6 +10,7 @@ import flash.events.EventDispatcher;
 import flash.filters.ColorMatrixFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import openfl.errors.Error;
 import starling.textures.Texture;
 
 /**
@@ -19,7 +20,7 @@ import starling.textures.Texture;
 
 /**
  * Graphical data storage that used by <code>GAFTimeline</code>. It contain all created textures and all
- * saved images as <code>BitmapData</code> (in case when <code>Starling.handleLostContext = true</code> was set before asset conversion).
+ * saved images as <code>BitmapData</code>.
  * Used as shared graphical data storage between several GAFTimelines if they are used the same texture atlas (bundle created using "Create bundle" option)
  */
 class GAFGFXData extends EventDispatcher
@@ -305,7 +306,21 @@ class GAFGFXData extends EventDispatcher
                 bitmapData = setGrayScale(tagfx.source.clone());
             }
             
-            dictionary.set(imageID, Texture.fromBitmapData(bitmapData, GAF.useMipMaps, false, tagfx.textureScale, tagfx.textureFormat));
+            if (bitmapData != null)
+            {
+                dictionary[imageID] = Texture.fromBitmapData(bitmapData, GAF.useMipMaps, false, tagfx.textureScale, tagfx.textureFormat);
+            }
+            else
+            {
+                if (tagfx.texture != null)
+                {
+                    dictionary[imageID] = tagfx.texture;
+                }
+                else
+                {
+                    throw new Error("GAFGFXData texture for rendering not found!");
+                }
+            }
         }
         else if (dictionary.get(imageID) == null)
         {

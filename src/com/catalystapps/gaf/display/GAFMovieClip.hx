@@ -15,7 +15,8 @@ import com.catalystapps.gaf.data.config.CSound;
 import com.catalystapps.gaf.data.config.CTextFieldObject;
 import com.catalystapps.gaf.data.config.CTextureAtlas;
 import com.catalystapps.gaf.display.GAFTextField;
-import com.catalystapps.gaf.filter.GAFFilter;
+import com.catalystapps.gaf.filter.GAFFilterChain;
+import com.catalystapps.gaf.filter.masks.GAFStencilMaskStyle;
 import com.catalystapps.gaf.utils.DebugUtility;
 import flash.errors.ArgumentError;
 import flash.errors.Error;
@@ -26,14 +27,14 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import openfl.Vector;
 import starling.animation.IAnimatable;
-import starling.core.RenderSupport;
 import starling.core.Starling;
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
 import starling.display.Quad;
-import starling.display.QuadBatch;
+import starling.display.MeshBatch;
 import starling.display.Sprite;
 import starling.events.Event;
+import starling.rendering.Painter;
 import starling.textures.TextureSmoothing;
 
 /*
@@ -86,60 +87,63 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
     
     private var _smoothing : String = TextureSmoothing.BILINEAR;
     
-    private var _displayObjectsDictionary : Map<String, DisplayObject>;
-    private var _pixelMasksDictionary : Map<String, GAFPixelMaskDisplayObject>;
-    private var _displayObjectsVector : Array<IGAFDisplayObject>;
-    private var _imagesVector : Array<IGAFImage>;
-    private var _mcVector : Array<GAFMovieClip>;
-    private var _pixelMasksVector : Array<GAFPixelMaskDisplayObject>;
+    private var _displayObjectsDictionary : Map<String, DisplayObject> = null;
+    private var _stencilMasksDictionary : Map<String, DisplayObject> = null;
+    private var _displayObjectsVector : Array<IGAFDisplayObject> = null;
+    private var _imagesVector : Array<IGAFImage> = null;
+    private var _mcVector : Array<GAFMovieClip> = null;
     
-    private var _playingSequence : CAnimationSequence;
-    private var _timelineBounds : Rectangle;
-    private var _maxSize : Point;
-    private var _boundsAndPivot : QuadBatch;
-    private var _config : GAFTimelineConfig;
-    private var _gafTimeline : GAFTimeline;
+    private var _playingSequence : CAnimationSequence = null;
+    private var _timelineBounds : Rectangle = null;
+    private var _maxSize : Point = null;
+    private var _boundsAndPivot : MeshBatch = null;
+    private var _config : GAFTimelineConfig = null;
+    private var _gafTimeline : GAFTimeline = null;
     
     private var _loop : Bool = true;
     private var _skipFrames : Bool = true;
-    private var _reset : Bool;
-    private var _masked : Bool;
-    private var _inPlay : Bool;
-    private var _hidden : Bool;
-    private var _reverse : Bool;
-    private var _started : Bool;
-    private var _disposed : Bool;
-    private var _hasFilter : Bool;
-    private var _useClipping : Bool;
-    private var _alphaLessMax : Bool;
-    private var _addToJuggler : Bool;
+    private var _reset : Bool = false;
+    private var _masked : Bool = false;
+    private var _inPlay : Bool = false;
+    private var _hidden : Bool = false;
+    private var _reverse : Bool = false;
+    private var _started : Bool = false;
+    private var _disposed : Bool = false;
+    private var _hasFilter : Bool = false;
+    private var _useClipping : Bool = false;
+    private var _alphaLessMax : Bool = false;
+    private var _addToJuggler : Bool = false;
     
-    private var _scale : Float;
-    private var _contentScaleFactor : Float;
+    private var _scale : Float = Math.NaN;
+    private var _contentScaleFactor : Float = Math.NaN;
     private var _currentTime : Float = 0;
     // Hold the current time spent animating
     private var _lastFrameTime : Float = 0;
-    private var _frameDuration : Float;
+    private var _frameDuration : Float = Math.NaN;
     
-    private var _nextFrame : Int;
-    private var _startFrame : Int;
-    private var _finalFrame : Int;
-    private var _currentFrame : Int;
-    private var _totalFrames : Int;
+    private var _nextFrame : Int = 0;
+    private var _startFrame : Int = 0;
+    private var _finalFrame : Int = 0;
+    private var _currentFrame : Int = 0;
+    private var _totalFrames : Int = 0;
     
-    private var _filterConfig : CFilter;
+    private var _filterChain : GAFFilterChain = null;
+    private var _filterConfig : CFilter = null;
     private var _filterScale : Float = Math.NaN;
     
-    private var _pivotChanged : Bool;
+    private var _pivotChanged : Bool = false;
     
     /** @private */
 	@:allow(com.catalystapps.gaf)
     private var __debugOriginalAlpha : Float = Math.NaN;
     
-    private var _orientationChanged : Bool;
+    private var _orientationChanged : Bool = false;
+    
+    private var _stencilMaskStyle : GAFStencilMaskStyle = null;
+	
 	
 	//instead of Dynamics hold DisplayObject here, take with get()
-	private var props:Map<String, DisplayObject> = new Map();
+	private var props : Map<String, DisplayObject> = new Map();
     
     // --------------------------------------------------------------------------
     //
@@ -203,7 +207,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
 	 */
     public function getMaskByID(id : String) : DisplayObject
     {
-        return this._displayObjectsDictionary[id];
+        return this._stencilMasksDictionary[id];
     }
     
     /**
@@ -215,40 +219,19 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
     {
 		/*
         var maskObject : IGAFDisplayObject = this._displayObjectsDictionary[id];
-        var maskAsDisplayObject : DisplayObject = try cast(maskObject, DisplayObject) catch(e:Dynamic) null;
-        var pixelMaskObject : GAFPixelMaskDisplayObject = this._pixelMasksDictionary[id];
-		*/
+        var maskAsDisplayObject : DisplayObject = cast(maskObject, DisplayObject);
+        var stencilMaskObject : DisplayObject = this._stencilMasksDictionary[id];
+		/*/
         var maskAsDisplayObject : DisplayObject = this._displayObjectsDictionary[id];
-        var maskObject : IGAFDisplayObject = cast(this._displayObjectsDictionary[id], IGAFDisplayObject);
-        var pixelMaskObject : GAFPixelMaskDisplayObject = this._pixelMasksDictionary[id];
+        ///var maskObject : IGAFDisplayObject = cast(this._displayObjectsDictionary[id], IGAFDisplayObject);
+        var stencilMaskObject : DisplayObject = this._stencilMasksDictionary[id];
+		//*/
 		
-        if (maskObject != null && pixelMaskObject != null)
+        //if (maskObject != null && stencilMaskObject != null)
+        if (maskAsDisplayObject != null && stencilMaskObject != null)
         {
-            var frameConfig : CAnimationFrame = this._config.animationConfigFrames.frames[this._currentFrame];
-            var maskInstance : CAnimationFrameInstance = frameConfig.getInstanceByID(id);
-            if (maskInstance != null)
-            {
-                //getTransformMatrix(try cast(maskObject, IGAFDisplayObject) catch(e:Dynamic) null, HELPER_MATRIX);
-                getTransformMatrix(maskObject, HELPER_MATRIX);
-                maskInstance.applyTransformMatrix(maskObject.transformationMatrix, HELPER_MATRIX, this._scale);
-                maskObject.invalidateOrientation();
-            }
-            
-            ////////////////////////////////
-            
-            var cFilter : CFilter = new CFilter();
-            var cmf : Vector<Float> = Vector.ofArray([1.0, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]);
-            cmf.fixed = true;
-            cFilter.addColorMatrixFilter(cmf);
-            
-            var gafFilter : GAFFilter = new GAFFilter();
-            gafFilter.setConfig(cFilter, this._scale);
-            
-            maskAsDisplayObject.filter = gafFilter;
-            
-            ////////////////////////////////
-            
-            pixelMaskObject.pixelMask = null;
+            maskAsDisplayObject.mask = stencilMaskObject;
+            this.addChild(stencilMaskObject);
             this.addChild(maskAsDisplayObject);
         }
         else
@@ -267,30 +250,21 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
     {
 		/*
         var maskObject : IGAFDisplayObject = cast(this._displayObjectsDictionary[id], IGAFDisplayObject);
-        var maskAsDisplayObject : DisplayObject = try cast(maskObject, DisplayObject) catch(e:Dynamic) null;
-        var pixelMaskObject : GAFPixelMaskDisplayObject = this._pixelMasksDictionary[id];
+        var maskAsDisplayObject : DisplayObject = cast(maskObject, DisplayObject);
+        var stencilMaskObject : DisplayObject = this._stencilMasksDictionary[id];
 		*/
         var maskAsDisplayObject : DisplayObject = this._displayObjectsDictionary[id];
-        var maskObject : IGAFDisplayObject = cast(maskAsDisplayObject, IGAFDisplayObject);
-        var pixelMaskObject : GAFPixelMaskDisplayObject = this._pixelMasksDictionary[id];
+        ///var maskObject : IGAFDisplayObject = cast(maskAsDisplayObject, IGAFDisplayObject);
+        var stencilMaskObject : DisplayObject = this._stencilMasksDictionary[id];
 		
-        if (maskObject != null && pixelMaskObject != null)
+        if (stencilMaskObject != null)
         {
-            maskAsDisplayObject.filter = null;
-            var frameConfig : CAnimationFrame = this._config.animationConfigFrames.frames[this._currentFrame];
-            var maskInstance : CAnimationFrameInstance = frameConfig.getInstanceByID(id);
-            if (maskInstance != null)
+            if (stencilMaskObject.parent == this)
             {
-                getTransformMatrix(maskObject, HELPER_MATRIX);
-                maskInstance.applyTransformMatrix(maskObject.transformationMatrix, HELPER_MATRIX, this._scale);
-                maskObject.invalidateOrientation();
-            }
-            
-            if (maskObject.parent == this)
-            {
+                stencilMaskObject.parent.mask = null;
+                this.removeChild(stencilMaskObject);
                 this.removeChild(maskAsDisplayObject);
             }
-            pixelMaskObject.pixelMask = maskAsDisplayObject;
         }
         else
         {
@@ -499,7 +473,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
         {
             if (this._boundsAndPivot == null)
             {
-                this._boundsAndPivot = new QuadBatch();
+                this._boundsAndPivot = new MeshBatch();
                 this.updateBounds(this._config.bounds);
             }
             
@@ -542,26 +516,18 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
             {
                 this._filterConfig = value;
                 this._filterScale = scale;
-                var gafFilter : GAFFilter;
-                if (this.filter != null)
+                
+                if (this._filterChain != null)
                 {
-                    if (Std.is(this.filter, GAFFilter))
-                    {
-                        gafFilter = cast(this.filter, GAFFilter);
-                    }
-                    else
-                    {
-                        this.filter.dispose();
-                        gafFilter = new GAFFilter();
-                    }
+                    _filterChain.dispose();
                 }
                 else
                 {
-                    gafFilter = new GAFFilter();
+                    _filterChain = new GAFFilterChain();
                 }
                 
-                gafFilter.setConfig(this._filterConfig, this._filterScale);
-                this.filter = gafFilter;
+                _filterChain.setFilterData(_filterConfig);
+                this.filter = _filterChain;
             }
             else
             {
@@ -570,6 +536,8 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
                     this.filter.dispose();
                     this.filter = null;
                 }
+                
+                this._filterChain = null;
                 this._filterConfig = null;
                 this._filterScale = Math.NaN;
             }
@@ -641,7 +609,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
             
             var child : DisplayObjectContainer;
             var childMC : GAFMovieClip;
-            var pixelMask : GAFPixelMaskDisplayObject;
+            
 			l = this.numChildren;
             for (i in 0...l)
             {
@@ -659,39 +627,6 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
 						else
 						{
 							childMC._play(true);
-						}
-					}
-					else if (Std.is(child, GAFPixelMaskDisplayObject))
-					{
-						pixelMask = cast(child, GAFPixelMaskDisplayObject);
-						var mi : Int = 0;
-						var ml : Int = pixelMask.numChildren;
-						while (mi < ml)
-						{
-							childMC = cast(pixelMask.getChildAt(mi), GAFMovieClip);
-							if (childMC != null)
-							{
-								if (calledByUser)
-								{
-									childMC.play(true);
-								}
-								else
-								{
-									childMC._play(true);
-								}
-							}
-							mi++;
-						}
-						if (Std.is(pixelMask.pixelMask, GAFMovieClip))
-						{
-							if (calledByUser)
-							{
-								cast(pixelMask.pixelMask, GAFMovieClip).play(true);
-							}
-							else
-							{
-								cast(pixelMask.pixelMask, GAFMovieClip)._play(true);
-							}
 						}
 					}
 				}
@@ -712,8 +647,8 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
         {
             var child : DisplayObjectContainer;
             var childMC : GAFMovieClip;
-            var childMask : GAFPixelMaskDisplayObject;
-            for (i in 0...this.numChildren)
+            
+            for (i in 0 ... this.numChildren)
             {
                 //child = try cast(this.getChildAt(i), DisplayObjectContainer) catch(e:Dynamic) null;
 				if (Std.is(this.getChildAt(i), DisplayObjectContainer))
@@ -730,38 +665,6 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
 						else
 						{
 							childMC._stop(true);
-						}
-					}
-					else if (Std.is(child, GAFPixelMaskDisplayObject))
-					{
-						//childMask = (try cast(child, GAFPixelMaskDisplayObject) catch(e:Dynamic) null);
-						childMask = cast(child, GAFPixelMaskDisplayObject);
-						for (m in 0...childMask.numChildren)
-						{
-							//childMC = try cast(childMask.getChildAt(m), GAFMovieClip) catch(e:Dynamic) null;
-							childMC = cast(childMask.getChildAt(m), GAFMovieClip);
-							if (childMC != null)
-							{
-								if (calledByUser)
-								{
-									childMC.stop(true);
-								}
-								else
-								{
-									childMC._stop(true);
-								}
-							}
-						}
-						if (Std.is(childMask.pixelMask, GAFMovieClip))
-						{
-							if (calledByUser)
-							{
-								cast(childMask.pixelMask, GAFMovieClip).stop(true);
-							}
-							else
-							{
-								cast(childMask.pixelMask, GAFMovieClip)._stop(true);
-							}
 						}
 					}
 				}
@@ -915,14 +818,6 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
     private function clearDisplayList() : Void
     {
         this.removeChildren();
-        
-        var i : Int = 0;
-        var l : Int = this._pixelMasksVector.length;
-        while (i < l)
-        {
-            this._pixelMasksVector[i].removeChildren();
-            i++;
-        }
     }
     
     private function draw() : Void
@@ -954,12 +849,11 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
         var frames : Array<CAnimationFrame> = this._config.animationConfigFrames.frames;
         if (frames.length > this._currentFrame)
         {
-            var maskIndex : Int = 0;
             var mc : GAFMovieClip;
             var objectPivotMatrix : Matrix;
             var displayObject : IGAFDisplayObject;
             var instance : CAnimationFrameInstance;
-            var pixelMaskObject : GAFPixelMaskDisplayObject = null;
+            var stencilMaskObject : DisplayObject = null;
             
             var animationObjectsDictionary : Map<String, CAnimationObject> = this._config.animationObjects.animationObjectsDictionary;
             var frameConfig : CAnimationFrame = frames[this._currentFrame];
@@ -1004,38 +898,32 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
                     displayObject.alpha = instance.alpha;
                     
                     //if display object is not a mask
-                    if (!animationObjectsDictionary.get(instance.id).mask) 
+                    if (!animationObjectsDictionary[instance.id].mask) 
 					{
 						//if display object is under mask
                         if (instance.maskID != null && instance.maskID != "")
                         {
                             this.renderDebug(mc, instance, true);
                             
-                            pixelMaskObject = this._pixelMasksDictionary[instance.maskID];
-                            if (pixelMaskObject != null)
+                            stencilMaskObject = this._stencilMasksDictionary[instance.maskID];
+                            if (stencilMaskObject != null)
                             {
-                                //pixelMaskObject.addChild(try cast(displayObject, DisplayObject) catch(e:Dynamic) null);
-                                pixelMaskObject.addChild(cast(displayObject, DisplayObject));
-                                maskIndex++;
+                                _stencilMaskStyle = new GAFStencilMaskStyle();
+                                cast(stencilMaskObject, GAFImage).style = _stencilMaskStyle;
                                 
                                 instance.applyTransformMatrix(displayObject.transformationMatrix, objectPivotMatrix, this._scale);
                                 displayObject.invalidateOrientation();
-                                displayObject.setFilterConfig(null);
                                 
-                                if (maskIndex == 1)
-                                {
-                                    this.addChild(pixelMaskObject);
-                                }
+                                cast(displayObject, DisplayObject).mask = stencilMaskObject;
+                                
+                                this.addChild(stencilMaskObject);
+                                this.addChild(cast(displayObject, DisplayObject));
+                                
+                                _stencilMaskStyle.threshold = 1;
                             }
                         }
                         else //if display object is not masked
                         {
-							if (pixelMaskObject != null)
-							{
-								maskIndex = 0;
-								pixelMaskObject = null;
-							}
-							
 							this.renderDebug(mc, instance, this._masked);
 							
 							instance.applyTransformMatrix(displayObject.transformationMatrix, objectPivotMatrix, this._scale);
@@ -1061,8 +949,6 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
                     }
                     else
                     {
-                        maskIndex = 0;
-                        
                         var maskObject : IGAFDisplayObject = cast(this._displayObjectsDictionary[instance.id], IGAFDisplayObject);
                         if (maskObject != null)
                         {
@@ -1178,11 +1064,10 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
     private function initialize(textureAtlas : CTextureAtlas, gafAsset : GAFAsset) : Void
     {
         this._displayObjectsDictionary = new Map();
-        this._pixelMasksDictionary = new Map();
+        this._stencilMasksDictionary = new Map();
         this._displayObjectsVector = [];
         this._imagesVector = [];
         this._mcVector = [];
-        this._pixelMasksVector = [];
         
         this._currentFrame = 0;
         this._totalFrames = this._config.framesCount;
@@ -1206,7 +1091,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
                     else
                     {
                         displayObject = new GAFImage(texture);
-                        cast(displayObject, GAFImage).smoothing = this._smoothing;
+                        cast(displayObject, GAFImage).textureSmoothing = this._smoothing;
                     }
 					
                 case CAnimationObject.TYPE_TEXTFIELD:
@@ -1229,10 +1114,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
             this.addDisplayObject(animationObjectConfig.instanceID, displayObject);
             if (animationObjectConfig.mask)
             {
-                var pixelMaskDisplayObject : GAFPixelMaskDisplayObject = new GAFPixelMaskDisplayObject(this._gafTimeline.contentScaleFactor);
-                pixelMaskDisplayObject.pixelMask = displayObject;
-                
-                this.addDisplayObject(animationObjectConfig.instanceID, pixelMaskDisplayObject);
+                this.addDisplayObject(animationObjectConfig.instanceID, displayObject, true);
             }
             
             if (this._config.namedParts != null)
@@ -1254,12 +1136,11 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
         }
     }
     
-    private function addDisplayObject(id : String, displayObject : DisplayObject) : Void
+    private function addDisplayObject(id : String, displayObject : DisplayObject, asMask : Bool = false) : Void
     {
-        if (Std.is(displayObject, GAFPixelMaskDisplayObject))
+        if (asMask)
         {
-            this._pixelMasksDictionary.set(id, cast(displayObject, GAFPixelMaskDisplayObject));
-            this._pixelMasksVector[_pixelMasksVector.length] = cast(displayObject, GAFPixelMaskDisplayObject);
+            this._stencilMasksDictionary[id] = displayObject;
         }
         else
         {
@@ -1281,7 +1162,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
     
     private function updateBounds(bounds : Rectangle) : Void
     {
-        this._boundsAndPivot.reset();
+        this._boundsAndPivot.clear();
 		
 		var quad : Quad = null;
         //bounds
@@ -1290,23 +1171,23 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
             quad = new Quad(bounds.width * this._scale, 2, 0xff0000);
             quad.x = bounds.x * this._scale;
             quad.y = bounds.y * this._scale;
-            this._boundsAndPivot.addQuad(quad);
+            this._boundsAndPivot.addMesh(quad);
             quad = new Quad(bounds.width * this._scale, 2, 0xff0000);
             quad.x = bounds.x * this._scale;
             quad.y = bounds.bottom * this._scale - 2;
-            this._boundsAndPivot.addQuad(quad);
+            this._boundsAndPivot.addMesh(quad);
             quad = new Quad(2, bounds.height * this._scale, 0xff0000);
             quad.x = bounds.x * this._scale;
             quad.y = bounds.y * this._scale;
-            this._boundsAndPivot.addQuad(quad);
+            this._boundsAndPivot.addMesh(quad);
             quad = new Quad(2, bounds.height * this._scale, 0xff0000);
             quad.x = bounds.right * this._scale - 2;
             quad.y = bounds.y * this._scale;
-            this._boundsAndPivot.addQuad(quad);
+            this._boundsAndPivot.addMesh(quad);
         }
         //pivot point
         quad = new Quad(5, 5, 0xff0000);
-        this._boundsAndPivot.addQuad(quad);
+        this._boundsAndPivot.addMesh(quad);
     }
     
     /** @private */
@@ -1403,29 +1284,24 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
                         }
                     }
                 }
-                id = this._pixelMasksVector.indexOf(cast(child, GAFPixelMaskDisplayObject));
-                if (id >= 0)
+                
+                for (key in this._stencilMasksDictionary.keys())
                 {
-                    this._pixelMasksVector.splice(id, 1);
-                    
-                    for (key in Reflect.fields(this._pixelMasksDictionary))
+                    if (this._stencilMasksDictionary[key] == child)
                     {
-                        if (this._pixelMasksDictionary[key] == child)
+                        if (this._config.namedParts != null)
                         {
-                            if (this._config.namedParts != null)
+                            instanceName = this._config.namedParts[key];
+							//if (instanceName != null && Reflect.hasField(this, instanceName))
+							if (instanceName != null && props.exists(instanceName))
                             {
-                                instanceName = this._config.namedParts[key];
-								//if (instanceName != null && Reflect.hasField(this, instanceName))
-								if (instanceName != null && props.exists(instanceName))
-                                {
-                                    //Reflect.deleteField(this, instanceName);
-									props.remove(instanceName);
-                                }
+                                //Reflect.deleteField(this, instanceName);
+								props.remove(instanceName);
                             }
-                            
-							this._pixelMasksDictionary.remove(key);
-                            break;
                         }
+                        
+						this._stencilMasksDictionary.remove(key);
+                        break;
                     }
                 }
             }
@@ -1476,10 +1352,9 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
             this._displayObjectsVector[i].dispose();
         }
         
-		l = this._pixelMasksVector.length;
-        for (i in 0...l)
+        for (key in this._stencilMasksDictionary.keys())
         {
-            this._pixelMasksVector[i].dispose();
+            this._stencilMasksDictionary[key].dispose();
         }
         
         if (this._boundsAndPivot != null)
@@ -1489,9 +1364,8 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
         }
         
         this._displayObjectsDictionary = null;
-        this._pixelMasksDictionary = null;
+        this._stencilMasksDictionary = null;
         this._displayObjectsVector = null;
-        this._pixelMasksVector = null;
         this._imagesVector = null;
         this._gafTimeline = null;
         this._mcVector = null;
@@ -1507,11 +1381,11 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
     }
     
     /** @private */
-    override public function render(support : RenderSupport, parentAlpha : Float) : Void
+    override public function render(painter : Painter) : Void
     {
         try
         {
-            super.render(support, parentAlpha);
+            super.render(painter);
         }
         catch (error : Dynamic)
         {
@@ -1721,7 +1595,7 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
             var i : Int = this._imagesVector.length;
             while (i-- > 0)
             {
-                this._imagesVector[i].smoothing = this._smoothing;
+                this._imagesVector[i].textureSmoothing = this._smoothing;
             }
         }
         return value;
@@ -1759,11 +1633,11 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
         
         if (this._useClipping && this._config.stageConfig != null)
         {
-            this.clipRect = new Rectangle(0, 0, this._config.stageConfig.width * this._scale, this._config.stageConfig.height * this._scale);
+            this.mask = new Quad(this._config.stageConfig.width * this._scale, this._config.stageConfig.height * this._scale);
         }
         else
         {
-            this.clipRect = null;
+            this.mask = null;
         }
         return value;
     }

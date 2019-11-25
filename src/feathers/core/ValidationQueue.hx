@@ -81,7 +81,6 @@ import starling.core.Starling;
         return this._isValidating;
     }
     
-	private var _delayedQueue:Array<IValidating> = [];
     private var _queue : Array<IValidating> = [];
     
     /**
@@ -99,22 +98,20 @@ import starling.core.Starling;
     /**
 	 * Adds a validating component to the queue.
 	 */
-	// in new feathers delayIfValidating = false
-    public function addControl(control : IValidating, delayIfValidating : Bool) : Void
+    public function addControl(control : IValidating) : Void
     {
 		//if the juggler was purged, we need to add the queue back in.
         if (!this._starling.juggler.contains(this))
         {
             this._starling.juggler.add(this);
         }
-		var currentQueue:Array<IValidating> = (this._isValidating && delayIfValidating) ? this._delayedQueue : this._queue;
-		if(currentQueue.indexOf(control) >= 0)
+		if(this._queue.indexOf(control) >= 0)
 		{
 			//already queued
             return;
         }
-		var queueLength:Int = currentQueue.length;
-		if(this._isValidating && currentQueue == this._queue)
+		var queueLength:Int = this._queue.length;
+		if(this._isValidating)
         {
 			//special case: we need to keep it sorted
             var depth : Int = control.depth;
@@ -126,7 +123,7 @@ import starling.core.Starling;
             var i : Int = queueLength - 1;
             while (i >= 0)
             {
-				var otherControl:IValidating = currentQueue[i];
+				var otherControl:IValidating = this._queue[i];
                 var otherDepth : Int = otherControl.depth;
                 //we can skip the overhead of calling queueSortFunction and
                 //of looking up the value we've already stored in the depth
@@ -140,21 +137,13 @@ import starling.core.Starling;
             //add one because we're going after the last item we checked
             //if we made it through all of them, i will be -1, and we want 0
             i++;
-			if(i == queueLength)
-			{
-				currentQueue[queueLength] = control;
-			}
-			else
-			{
-				currentQueue.insert(i, control);
-			}
+            this._queue.insert(i, control);
         }
         else
         {
 			//faster than push() because push() creates a temporary rest
             //Array that needs to be garbage collected
             this._queue[queueLength] = control;
-			currentQueue[queueLength] = control;
         }
     }
     
@@ -195,9 +184,6 @@ import starling.core.Starling;
             }
             item.validate();
         }
-		var temp:Array<IValidating> = this._queue;
-		this._queue = this._delayedQueue;
-		this._delayedQueue = temp;
 		
         this._isValidating = false;
     }

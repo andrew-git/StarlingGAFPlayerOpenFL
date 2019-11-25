@@ -189,7 +189,7 @@ class ZipToGAFAssetConverter extends EventDispatcher
 	 */
     public function convert(data : Dynamic, defaultScale : Null<Float> = null, defaultContentScaleFactor : Null<Float> = null) : Void
     {
-        if (!Starling.handleLostContext && ZipToGAFAssetConverter.actionWithAtlases == ZipToGAFAssetConverter.ACTION_DONT_LOAD_IN_GPU_MEMORY)
+        if (ZipToGAFAssetConverter.actionWithAtlases == ZipToGAFAssetConverter.ACTION_DONT_LOAD_IN_GPU_MEMORY)
         {
             throw new Error("Impossible parameters combination! Starling.handleLostContext = false and actionWithAtlases = ACTION_DONT_LOAD_ALL_IN_VIDEO_MEMORY One of the parameters must be changed!");
         }
@@ -654,12 +654,9 @@ class ZipToGAFAssetConverter extends EventDispatcher
         var gafAsset : GAFAsset = null;
         var i : Int;
         
-        if (!Starling.handleLostContext)
+        for (taGFX in this._taGFXs)
         {
-            for (taGFX in this._taGFXs)
-            {
-                taGFX.clearSourceAfterTextureCreated = true;
-            }
+            taGFX.clearSourceAfterTextureCreated = false;
         }
         
 		for (i in 0...this._gafAssetsIDs.length) 

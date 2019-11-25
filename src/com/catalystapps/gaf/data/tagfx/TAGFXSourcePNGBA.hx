@@ -16,6 +16,7 @@ import flash.events.SecurityErrorEvent;
 import flash.geom.Point;
 import flash.system.LoaderContext;
 import flash.utils.ByteArray;
+import starling.textures.ConcreteTexture;
 import starling.textures.Texture;
 
 /**
@@ -106,7 +107,7 @@ class TAGFXSourcePNGBA extends TAGFXBase
             this._texture = Texture.empty(
                             this._textureSize.x / this._textureScale, this._textureSize.y / this._textureScale, 
                             true, GAF.useMipMaps, false, this._textureScale, this._textureFormat, false);
-            this._texture.root.onRestore = function() : Void
+            this._texture.root.onRestore = function(concreteTexture : ConcreteTexture) : Void
 			{
 				_isReady = false;
 				loadBitmapData(_source);

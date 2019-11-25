@@ -8,7 +8,7 @@
 package com.catalystapps.gaf.display;
 
 import com.catalystapps.gaf.data.config.CFilter;
-import com.catalystapps.gaf.filter.GAFFilter;
+import com.catalystapps.gaf.filter.GAFFilterChain;
 import com.catalystapps.gaf.utils.MathUtility;
 import feathers.core.IValidating;
 import feathers.core.ValidationQueue;
@@ -20,7 +20,7 @@ import flash.geom.Rectangle;
 import starling.core.Starling;
 import starling.display.DisplayObject;
 import starling.display.Image;
-import starling.display.QuadBatch;
+import starling.display.MeshBatch;
 import starling.display.Sprite;
 import starling.events.Event;
 import starling.textures.Texture;
@@ -76,7 +76,8 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
     public var assetTexture(get, never) : IGAFTexture;
     public var textures(get, set) : GAFScale9Texture;
     public var textureScale(get, set) : Float;
-    public var smoothing(get, set) : String;
+    public var textureSmoothing(get, set) : String;
+    public var smoothing(never, set) : String;
     public var color(get, set) : Int;
     public var useSeparateBatch(get, set) : Bool;
     public var depth(get, never) : Int;
@@ -101,34 +102,35 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
     private var _propertiesChanged : Bool = true;
     private var _layoutChanged : Bool = true;
     private var _renderingChanged : Bool = true;
-    private var _frame : Rectangle;
-    private var _textures : GAFScale9Texture;
+    private var _frame : Rectangle = null;
+    private var _textures : GAFScale9Texture = null;
     private var _width : Float = Math.NaN;
     private var _height : Float = Math.NaN;
     private var _textureScale : Float = 1;
     private var _smoothing : String = TextureSmoothing.BILINEAR;
     private var _color : Int = 0xffffff;
     private var _useSeparateBatch : Bool = true;
-    private var _hitArea : Rectangle;
-    private var _batch : QuadBatch;
+    private var _hitArea : Rectangle = null;
+    private var _batch : MeshBatch = null;
     private var _isValidating : Bool = false;
     private var _isInvalid : Bool = false;
-    private var _validationQueue : ValidationQueue;
+    private var _validationQueue : ValidationQueue = null;
     private var _depth : Int = -1;
     
-    private var _debugColors : Array<Int>;
-    private var _debugAlphas : Array<Float>;
+    private var _debugColors : Array<Int> = null;
+    private var _debugAlphas : Array<Float> = null;
     
-    private var _filterConfig : CFilter;
+    private var _filterChain : GAFFilterChain = null;
+    private var _filterConfig : CFilter = null;
     private var _filterScale : Float = Math.NaN;
     
-    private var _maxSize : Point;
+    private var _maxSize : Point = null;
     
-    private var _pivotChanged : Bool;
+    private var _pivotChanged : Bool = false;
     
     private var __debugOriginalAlpha : Float = Math.NaN;
     
-    private var _orientationChanged : Bool;
+    private var _orientationChanged : Bool = false;
     
     //--------------------------------------------------------------------------
     //
@@ -155,11 +157,11 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
         this._hitArea = new Rectangle();
         this.invalidateSize();
         
-        this._batch = new QuadBatch();
+        this._batch = new MeshBatch();
         this._batch.touchable = false;
         this.addChild(this._batch);
         
-        this.addEventListener(Event.FLATTEN, this.flattenHandler);
+        //this.addEventListener(Event.FLATTEN, this.flattenHandler);
         this.addEventListener(Event.ADDED_TO_STAGE, this.addedToStageHandler);
     }
     
@@ -249,7 +251,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
 				//we were already validating, and something else told us to
                 //validate. that's bad.
 				
-                this._validationQueue.addControl(this, true);
+                this._validationQueue.addControl(this);
             }
             return;
         }
@@ -257,7 +259,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
         if (this._propertiesChanged || this._layoutChanged || this._renderingChanged)
         {
             this._batch.batchable = !this._useSeparateBatch;
-            this._batch.reset();
+            this._batch.clear();
             
             if (sHelperImage == null)
 			{
@@ -266,7 +268,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
                 //won't be an error from Quad.
                 sHelperImage = new Image(this._textures.middleCenter);
             }
-            sHelperImage.smoothing = this._smoothing;
+            sHelperImage.textureSmoothing = this._smoothing;
             
             if (!setDebugVertexColors([0, 1, 2, 3]))
             {
@@ -309,7 +311,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
                     sHelperImage.height = scaledTopHeight;
                     sHelperImage.x = scaledLeftWidth - sHelperImage.width;
                     sHelperImage.y = scaledTopHeight - sHelperImage.height;
-                    this._batch.addImage(sHelperImage);
+                    this._batch.addMesh(sHelperImage);
                 }
                 
                 if (scaledCenterWidth > 0)
@@ -321,7 +323,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
                     sHelperImage.height = scaledTopHeight;
                     sHelperImage.x = scaledLeftWidth;
                     sHelperImage.y = scaledTopHeight - sHelperImage.height;
-                    this._batch.addImage(sHelperImage);
+                    this._batch.addMesh(sHelperImage);
                 }
                 
                 if (scaledRightWidth > 0)
@@ -333,7 +335,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
                     sHelperImage.height = scaledTopHeight;
                     sHelperImage.x = this._width - scaledRightWidth;
                     sHelperImage.y = scaledTopHeight - sHelperImage.height;
-                    this._batch.addImage(sHelperImage);
+                    this._batch.addMesh(sHelperImage);
                 }
             }
             
@@ -348,7 +350,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
                     sHelperImage.height = scaledMiddleHeight;
                     sHelperImage.x = scaledLeftWidth - sHelperImage.width;
                     sHelperImage.y = scaledTopHeight;
-                    this._batch.addImage(sHelperImage);
+                    this._batch.addMesh(sHelperImage);
                 }
                 
                 if (scaledCenterWidth > 0)
@@ -360,7 +362,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
                     sHelperImage.height = scaledMiddleHeight;
                     sHelperImage.x = scaledLeftWidth;
                     sHelperImage.y = scaledTopHeight;
-                    this._batch.addImage(sHelperImage);
+                    this._batch.addMesh(sHelperImage);
                 }
                 
                 if (scaledRightWidth > 0)
@@ -372,7 +374,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
                     sHelperImage.height = scaledMiddleHeight;
                     sHelperImage.x = this._width - scaledRightWidth;
                     sHelperImage.y = scaledTopHeight;
-                    this._batch.addImage(sHelperImage);
+                    this._batch.addMesh(sHelperImage);
                 }
             }
             
@@ -387,7 +389,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
                     sHelperImage.height = scaledBottomHeight;
                     sHelperImage.x = scaledLeftWidth - sHelperImage.width;
                     sHelperImage.y = this._height - scaledBottomHeight;
-                    this._batch.addImage(sHelperImage);
+                    this._batch.addMesh(sHelperImage);
                 }
                 
                 if (scaledCenterWidth > 0)
@@ -399,7 +401,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
                     sHelperImage.height = scaledBottomHeight;
                     sHelperImage.x = scaledLeftWidth;
                     sHelperImage.y = this._height - scaledBottomHeight;
-                    this._batch.addImage(sHelperImage);
+                    this._batch.addMesh(sHelperImage);
                 }
                 
                 if (scaledRightWidth > 0)
@@ -411,7 +413,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
                     sHelperImage.height = scaledBottomHeight;
                     sHelperImage.x = this._width - scaledRightWidth;
                     sHelperImage.y = this._height - scaledBottomHeight;
-                    this._batch.addImage(sHelperImage);
+                    this._batch.addMesh(sHelperImage);
                 }
             }
         }
@@ -480,26 +482,17 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
             {
                 this._filterConfig = value;
                 this._filterScale = scale;
-                var gafFilter : GAFFilter;
-                if (this._batch.filter != null)
+                if (this._filterChain != null)
                 {
-                    if (Std.is(this._batch.filter, GAFFilter))
-                    {
-                        gafFilter = cast(this._batch.filter, GAFFilter);
-                    }
-                    else
-                    {
-                        this._batch.filter.dispose();
-                        gafFilter = new GAFFilter();
-                    }
+                    _filterChain.dispose();
                 }
                 else
                 {
-                    gafFilter = new GAFFilter();
+                    _filterChain = new GAFFilterChain();
                 }
                 
-                gafFilter.setConfig(this._filterConfig, this._filterScale);
-                this._batch.filter = gafFilter;
+                _filterChain.setFilterData(_filterConfig);
+                this._batch.filter = _filterChain;
             }
             else
             {
@@ -508,6 +501,8 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
                     this._batch.filter.dispose();
                     this._batch.filter = null;
                 }
+                
+                this._filterChain = null;
                 this._filterConfig = null;
                 this._filterScale = Math.NaN;
             }
@@ -541,7 +536,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
         {
             return;
         }
-        this._validationQueue.addControl(this, false);
+        this._validationQueue.dispose();//addControl(this);
     }
     
     private function setDebugColor(idx : Int) : Void
@@ -668,9 +663,9 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
     /**
 	 * @private
 	 */
-    override public function hitTest(localPoint : Point, forTouch : Bool = false) : DisplayObject
+    override public function hitTest(localPoint : Point) : DisplayObject
     {
-        if (forTouch && (!this.visible || !this.touchable))
+        if (!this.visible || !this.touchable)
         {
             return null;
         }
@@ -826,7 +821,7 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
         this._validationQueue = ValidationQueue.forStarling(Starling.current);
         if (this._isInvalid)
         {
-            this._validationQueue.addControl(this, false);
+            this._validationQueue.dispose();//addControl(this, false);
         }
     }
     
@@ -915,15 +910,21 @@ class GAFScale9Image extends Sprite implements IValidating implements IGAFImage 
 	 * <p>In the following example, the smoothing is changed:</p>
 	 *
 	 * <listing version="3.0">
-	 * image.smoothing = TextureSmoothing.NONE;</listing>
+	 * image.textureSmoothing = TextureSmoothing.NONE;</listing>
 	 *
 	 * @default starling.textures.TextureSmoothing.BILINEAR
 	 *
 	 * @see starling.textures.TextureSmoothing
 	 */
-    private function get_smoothing() : String
+    private function get_textureSmoothing() : String
     {
         return this._smoothing;
+    }
+    
+    private function set_textureSmoothing(smoothing : String) : String
+    {
+        this._smoothing = smoothing;
+        return smoothing;
     }
     
     /**
