@@ -8,8 +8,8 @@ import flash.utils.ByteArray;
 import starling.textures.Texture;
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class TAGFXSourceATFBA extends TAGFXBase
 {
     //--------------------------------------------------------------------------
@@ -61,7 +61,7 @@ class TAGFXSourceATFBA extends TAGFXBase
     
     override private function get_texture() : Texture
     {
-        if (!this._texture)
+        if (this._texture == null)
         {
             this._texture = Texture.fromAtfData(this._source, this._textureScale, GAF.useMipMaps, this.onTextureReady);
             this._texture.root.onRestore = function() : Void
@@ -84,7 +84,7 @@ class TAGFXSourceATFBA extends TAGFXBase
     {
         if (this._clearSourceAfterTextureCreated)
         {
-            (try cast(this._source, ByteArray) catch(e:Dynamic) null).clear();
+            cast(this._source, ByteArray).clear();
         }
         
         super.onTextureReady(texture);

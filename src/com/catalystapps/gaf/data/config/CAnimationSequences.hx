@@ -20,10 +20,10 @@ class CAnimationSequences
     //
     //--------------------------------------------------------------------------
     
-    private var _sequences : Array<CAnimationSequence>;
+    private var _sequences : Array<CAnimationSequence> = null;
     
-    private var _sequencesStartDictionary : Dynamic;
-    private var _sequencesEndDictionary : Dynamic;
+    private var _sequencesStartDictionary : Map<Int, CAnimationSequence> = null;
+    private var _sequencesEndDictionary : Map<Int, CAnimationSequence> = null;
     
     //--------------------------------------------------------------------------
     //
@@ -33,10 +33,10 @@ class CAnimationSequences
     
     public function new()
     {
-        this._sequences = new Array<CAnimationSequence>();
+        this._sequences = []; // new Array<CAnimationSequence>();
         
-        this._sequencesStartDictionary = { };
-        this._sequencesEndDictionary = { };
+        this._sequencesStartDictionary = new Map();
+        this._sequencesEndDictionary = new Map();
     }
     
     //--------------------------------------------------------------------------

@@ -348,7 +348,7 @@ class GAFGFXData extends EventDispatcher
     
     private function onTextureReady(event : Event) : Void
     {
-        var tagfx : ITAGFX = try cast(event.currentTarget, ITAGFX) catch(e:Dynamic) null;
+        var tagfx : ITAGFX = cast(event.currentTarget, ITAGFX);
         tagfx.removeEventListener(TAGFXBase.EVENT_TYPE_TEXTURE_READY, this.onTextureReady);
         
         //This is an intentional compilation error. See the README for handling the delete keyword

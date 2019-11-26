@@ -16,7 +16,8 @@
 	<source path="src" />
 	<haxelib name="openfl" />
 	<haxelib name="zip" />
-	<haxelib name="starling" version="1.8.14" />
+	<haxelib name="format" />
+	<haxelib name="starling" version="1.8.16" />
 	
 	<!-- additional -->
 	<classpath name="../../src/" />

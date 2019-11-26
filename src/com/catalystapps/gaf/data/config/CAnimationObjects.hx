@@ -20,7 +20,7 @@ class CAnimationObjects
     //
     //--------------------------------------------------------------------------
     
-    private var _animationObjectsDictionary : Map<String, CAnimationObject>;
+    private var _animationObjectsDictionary : Map<String, CAnimationObject> = null;
     
     //--------------------------------------------------------------------------
     //

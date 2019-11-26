@@ -35,7 +35,7 @@ class TAGFXSourcePNGURL extends TAGFXBase
     //
     //--------------------------------------------------------------------------
     
-    private var _pngLoader : Loader;
+    private var _pngLoader : Loader = null;
     private var _pngIsLoading : Bool = false;
     
     //--------------------------------------------------------------------------

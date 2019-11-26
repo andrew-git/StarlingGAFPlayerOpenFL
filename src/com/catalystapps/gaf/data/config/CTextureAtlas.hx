@@ -24,8 +24,8 @@ class CTextureAtlas
     //
     //--------------------------------------------------------------------------
     
-    private var _textureAtlasesDictionary : Map<String, TextureAtlas>;
-    private var _textureAtlasConfig : CTextureAtlasCSF;
+    private var _textureAtlasesDictionary : Map<String, TextureAtlas> = null;
+    private var _textureAtlasConfig : CTextureAtlasCSF = null;
     
     //--------------------------------------------------------------------------
     //

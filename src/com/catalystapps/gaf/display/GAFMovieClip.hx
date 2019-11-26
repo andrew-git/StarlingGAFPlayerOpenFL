@@ -1368,17 +1368,27 @@ class GAFMovieClip extends Sprite implements IAnimatable implements IGAFDisplayO
             var child : DisplayObject = this.getChildAt(index);
             if (Std.is(child, IGAFDisplayObject))
             {
-                var id : Int = this._mcVector.indexOf(try cast(child, GAFMovieClip) catch(e:Dynamic) null);
+                //var id : Int = this._mcVector.indexOf(try cast(child, GAFMovieClip) catch(e:Dynamic) null);
+                var id : Int = -1;
+				if (Std.is(child, GAFMovieClip))
+				{
+					id = this._mcVector.indexOf(cast child);
+				}
                 if (id >= 0)
                 {
                     this._mcVector.splice(id, 1);
                 }
-                id = this._imagesVector.indexOf(try cast(child, IGAFImage) catch(e:Dynamic) null);
+                //id = this._imagesVector.indexOf(try cast(child, IGAFImage) catch(e:Dynamic) null);
+                id = -1;
+				if (Std.is(child, IGAFImage))
+				{
+					id = this._imagesVector.indexOf(cast child);
+				}
                 if (id >= 0)
                 {
                     this._imagesVector.splice(id, 1);
                 }
-                id = this._displayObjectsVector.indexOf(try cast(child, IGAFDisplayObject) catch(e:Dynamic) null);
+                id = this._displayObjectsVector.indexOf(cast child);
                 if (id >= 0)
                 {
                     this._displayObjectsVector.splice(id, 1);

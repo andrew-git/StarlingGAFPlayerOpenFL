@@ -89,7 +89,7 @@ class GAFSoundManager
 	@:allow(com.catalystapps.gaf)
     private function play(sound : Sound, soundID : Int, soundOptions : Dynamic, swfName : String) : Void
     {
-        if (Reflect.field(soundOptions, "continue") != null
+        if (Reflect.field(soundOptions, "continue") == true
             && soundChannels != null
 			&& soundChannels.get(swfName) != null
             && soundChannels.get(swfName).get(soundID) != null)

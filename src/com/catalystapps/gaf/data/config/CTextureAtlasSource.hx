@@ -2,8 +2,8 @@ package com.catalystapps.gaf.data.config;
 
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class CTextureAtlasSource
 {
     public var id(get, never) : String;
@@ -21,8 +21,8 @@ class CTextureAtlasSource
     //
     //--------------------------------------------------------------------------
     
-    private var _id : String;
-    private var _source : String;
+    private var _id : String = null;
+    private var _source : String = null;
     
     //--------------------------------------------------------------------------
     //
@@ -76,4 +76,3 @@ class CTextureAtlasSource
         return this._source;
     }
 }
-

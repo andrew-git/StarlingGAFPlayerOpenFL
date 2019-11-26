@@ -51,13 +51,13 @@ class TAGFXBase extends EventDispatcher implements ITAGFX
     //
     //--------------------------------------------------------------------------
     
-    private var _texture : Texture;
-    private var _textureSize : Point;
+    private var _texture : Texture = null;
+    private var _textureSize : Point = null;
     private var _textureScale : Float = -1;
-    private var _textureFormat : String;
-    private var _source : Dynamic;
-    private var _clearSourceAfterTextureCreated : Bool;
-    private var _isReady : Bool;
+    private var _textureFormat : String = null;
+    private var _source : Dynamic = null;
+    private var _clearSourceAfterTextureCreated : Bool = false;
+    private var _isReady : Bool = false;
     
     //--------------------------------------------------------------------------
     //

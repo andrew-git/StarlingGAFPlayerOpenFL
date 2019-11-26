@@ -36,7 +36,7 @@ class SimpleGame extends Sprite
 		var loader = new URLLoader();
 		loader.dataFormat = "binary";
 		loader.addEventListener(Event.COMPLETE, onComplete);
-#if flash
+#if !html5
 		loader.load(new URLRequest(path));
 #else
 		loader.load(new URLRequest("http://localhost:2000/" + path));

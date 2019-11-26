@@ -2,8 +2,8 @@ package com.catalystapps.gaf.data.config;
 
 
 /**
-	 * Data object that describe sequence
-	 */
+ * Data object that describe sequence
+ */
 class CAnimationSequence
 {
     public var id(get, never) : String;
@@ -22,9 +22,9 @@ class CAnimationSequence
     //
     //--------------------------------------------------------------------------
     
-    private var _id : String;
-    private var _startFrameNo : Int;
-    private var _endFrameNo : Int;
+    private var _id : String = null;
+    private var _startFrameNo : Int = 0;
+    private var _endFrameNo : Int = 0;
     
     //--------------------------------------------------------------------------
     //
@@ -33,8 +33,8 @@ class CAnimationSequence
     //--------------------------------------------------------------------------
     
     /**
-		 * @private
-		 */
+	 * @private
+	 */
     public function new(id : String, startFrameNo : Int, endFrameNo : Int)
     {
         this._id = id;
@@ -49,12 +49,11 @@ class CAnimationSequence
     //--------------------------------------------------------------------------
     
     /**
-		 * @private
-		 */
+	 * @private
+	 */
     public function isSequenceFrame(frameNo : Int) : Bool
-    // first frame is "1" !!!
     {
-        
+        // first frame is "1" !!!
         
         if (frameNo >= this._startFrameNo && frameNo <= this._endFrameNo)
         {
@@ -91,30 +90,29 @@ class CAnimationSequence
     //--------------------------------------------------------------------------
     
     /**
-		 * Sequence ID
-		 * @return Sequence ID
-		 */
+	 * Sequence ID
+	 * @return Sequence ID
+	 */
     private function get_id() : String
     {
         return this._id;
     }
     
     /**
-		 * Sequence start frame number
-		 * @return Sequence start frame number
-		 */
+	 * Sequence start frame number
+	 * @return Sequence start frame number
+	 */
     private function get_startFrameNo() : Int
     {
         return this._startFrameNo;
     }
     
     /**
-		 * Sequence end frame number
-		 * @return Sequence end frame number
-		 */
+	 * Sequence end frame number
+	 * @return Sequence end frame number
+	 */
     private function get_endFrameNo() : Int
     {
         return this._endFrameNo;
     }
 }
-

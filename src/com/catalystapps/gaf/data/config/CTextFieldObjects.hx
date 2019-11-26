@@ -5,11 +5,10 @@ package com.catalystapps.gaf.data.config;
 
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class CTextFieldObjects
 {
-    //public var textFieldObjectsDictionary(get, never) : Dynamic;
     public var textFieldObjectsDictionary(get, never) : Map<String, CTextFieldObject>;
 
     //--------------------------------------------------------------------------
@@ -24,7 +23,7 @@ class CTextFieldObjects
     //
     //--------------------------------------------------------------------------
     
-    private var _textFieldObjectsDictionary : Map<String, CTextFieldObject>;
+    private var _textFieldObjectsDictionary : Map<String, CTextFieldObject> = null;
     
     //--------------------------------------------------------------------------
     //
@@ -51,7 +50,7 @@ class CTextFieldObjects
         }
     }
     
-	//wtf typo???
+	//typo???
 	/*
     public function getAnimationObject(id : String) : CAnimationObject
     {
@@ -106,4 +105,3 @@ class CTextFieldObjects
         return this._textFieldObjectsDictionary;
     }
 }
-
