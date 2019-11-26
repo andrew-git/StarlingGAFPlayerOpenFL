@@ -31,8 +31,8 @@ class CAnimationFrameInstance
     private var _maskID : String = null;
     private var _filter : CFilter = null;
     
-    private static var tx : Float;
-	private static var ty : Float;
+    private static var tx : Float = Math.NaN;
+    private static var ty : Float = Math.NaN;
     
     // --------------------------------------------------------------------------
     //

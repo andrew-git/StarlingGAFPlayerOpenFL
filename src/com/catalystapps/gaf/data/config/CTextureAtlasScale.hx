@@ -3,8 +3,8 @@ package com.catalystapps.gaf.data.config;
 import com.catalystapps.gaf.utils.MathUtility;
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class CTextureAtlasScale
 {
     public var scale(get, set) : Null<Float>;
@@ -25,8 +25,8 @@ class CTextureAtlasScale
     
     private var _scale : Null<Float> = null;
     
-    private var _allContentScaleFactors : Array<CTextureAtlasCSF>;
-    private var _contentScaleFactor : CTextureAtlasCSF;
+    private var _allContentScaleFactors : Array<CTextureAtlasCSF> = null;
+    private var _contentScaleFactor : CTextureAtlasCSF = null;
     
     //--------------------------------------------------------------------------
     //
@@ -123,4 +123,3 @@ class CTextureAtlasScale
         return value;
     }
 }
-

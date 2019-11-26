@@ -9,8 +9,8 @@ import starling.textures.ConcreteTexture;
 import starling.textures.Texture;
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class TAGFXSourceATFBA extends TAGFXBase
 {
     //--------------------------------------------------------------------------
@@ -85,10 +85,9 @@ class TAGFXSourceATFBA extends TAGFXBase
     {
         if (this._clearSourceAfterTextureCreated)
         {
-            (try cast(this._source, ByteArray) catch(e:Dynamic) null).clear();
+            cast(this._source, ByteArray).clear();
         }
         
         super.onTextureReady(texture);
     }
 }
-

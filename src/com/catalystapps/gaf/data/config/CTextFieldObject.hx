@@ -7,8 +7,8 @@ import flash.geom.Point;
 import flash.text.TextFormat;
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class CTextFieldObject
 {
     public var id(get, set) : String;
@@ -38,20 +38,20 @@ class CTextFieldObject
     //
     //--------------------------------------------------------------------------
     
-    private var _id : String;
+    private var _id : String = null;
     private var _width : Float = Math.NaN;
     private var _height : Float = Math.NaN;
-    private var _text : String;
-    private var _embedFonts : Bool;
-    private var _multiline : Bool;
-    private var _wordWrap : Bool;
-    private var _restrictt : String;
-    private var _editable : Bool;
-    private var _selectable : Bool;
-    private var _displayAsPassword : Bool;
-    private var _maxChars : Int;
-    private var _textFormat : TextFormat;
-    private var _pivotPoint : Point;
+    private var _text : String = null;
+    private var _embedFonts : Bool = false;
+    private var _multiline : Bool = false;
+    private var _wordWrap : Bool = false;
+    private var _restrictt : String = null;
+    private var _editable : Bool = false;
+    private var _selectable : Bool = false;
+    private var _displayAsPassword : Bool = false;
+    private var _maxChars : Int = 0;
+    private var _textFormat : TextFormat = null;
+    private var _pivotPoint : Point = null;
     
     //--------------------------------------------------------------------------
     //
@@ -59,8 +59,7 @@ class CTextFieldObject
     //
     //--------------------------------------------------------------------------
     
-    public function new(id : String, text : String, textFormat : TextFormat, width : Float,
-            height : Float)
+    public function new(id : String, text : String, textFormat : TextFormat, width : Float, height : Float)
     {
         _id = id;
         _text = text;
@@ -262,4 +261,3 @@ class CTextFieldObject
         return value;
     }
 }
-

@@ -3,8 +3,8 @@ package com.catalystapps.gaf.data.config;
 import flash.geom.Point;
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class CAnimationObject
 {
     public var instanceID(get, never) : String;
@@ -29,11 +29,11 @@ class CAnimationObject
     //
     //--------------------------------------------------------------------------
     
-    private var _instanceID : String;
-    private var _regionID : String;
-    private var _type : String;
-    private var _mask : Bool;
-    private var _maxSize : Point;
+    private var _instanceID : String = null;
+    private var _regionID : String = null;
+    private var _type : String = null;
+    private var _mask : Bool = false;
+    private var _maxSize : Point = null;
     
     //--------------------------------------------------------------------------
     //
@@ -107,7 +107,7 @@ class CAnimationObject
     private function set_maxSize(value : Point) : Point
     {
         this._maxSize = value;
+		
         return value;
     }
 }
-

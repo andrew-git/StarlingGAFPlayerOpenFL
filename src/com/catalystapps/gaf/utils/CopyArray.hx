@@ -9,11 +9,11 @@ package com.catalystapps.gaf.utils;
     /**
 	 * @private
 	 */
-    public function copyArray(from : Array<Dynamic>, to : Array<Dynamic>) : Void
+    public function copyArray<T>(from : Array<T>, to : Array<T>) : Void
     {
         var l : Int = from.length;
         
-        for (i in 0...l)
+        for (i in 0 ... l)
         {
             to[i] = from[i];
         }

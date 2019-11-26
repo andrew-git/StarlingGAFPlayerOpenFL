@@ -20,9 +20,9 @@ class CTextureAtlasElements
     //
     //--------------------------------------------------------------------------
     
-    private var _elementsVector : Array<CTextureAtlasElement>;
-    private var _elementsDictionary : Map<String, CTextureAtlasElement>;
-    private var _elementsByLinkage : Map<String, CTextureAtlasElement>;
+    private var _elementsVector : Array<CTextureAtlasElement> = null;
+    private var _elementsDictionary : Map<String, CTextureAtlasElement> = null;
+    private var _elementsByLinkage : Map<String, CTextureAtlasElement> = null;
     
     //--------------------------------------------------------------------------
     //

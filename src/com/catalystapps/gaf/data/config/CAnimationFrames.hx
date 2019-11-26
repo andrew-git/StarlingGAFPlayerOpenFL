@@ -2,8 +2,8 @@ package com.catalystapps.gaf.data.config;
 
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class CAnimationFrames
 {
     public var frames(get, never) : Array<CAnimationFrame>;
@@ -20,7 +20,7 @@ class CAnimationFrames
     //
     //--------------------------------------------------------------------------
     
-    private var _frames : Array<CAnimationFrame>;
+    private var _frames : Array<CAnimationFrame> = null;
     
     //--------------------------------------------------------------------------
     //
@@ -30,7 +30,7 @@ class CAnimationFrames
     
     public function new()
     {
-        this._frames = new Array<CAnimationFrame>();
+        this._frames = []; // new Array<CAnimationFrame>();
     }
     
     //--------------------------------------------------------------------------
@@ -73,4 +73,3 @@ class CAnimationFrames
         return this._frames;
     }
 }
-

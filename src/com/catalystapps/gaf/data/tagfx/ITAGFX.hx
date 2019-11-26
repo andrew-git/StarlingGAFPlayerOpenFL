@@ -8,8 +8,8 @@ import flash.geom.Point;
 import starling.textures.Texture;
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 interface ITAGFX extends IEventDispatcher
 {
     
@@ -22,4 +22,3 @@ interface ITAGFX extends IEventDispatcher
     var ready(get, never) : Bool;
 
 }
-

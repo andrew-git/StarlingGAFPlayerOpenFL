@@ -2,16 +2,17 @@ package com.catalystapps.gaf.data.config;
 
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class CStage
 {
-    public var fps : Int;
-    public var color : Int;
-    public var width : Int;
-    public var height : Int;
+    public var fps : Int = 0;
+    public var color : Int = 0;
+    public var width : Int = 0;
+    public var height : Int = 0;
     
-    public function clone(source : Dynamic) : CStage
+    //public function clone(source : Dynamic) : CStage
+    public function clone(source : {fps : Int, color : Int, width : Int, height : Int}) : CStage
     {
         fps = source.fps;
         color = source.color;
@@ -25,4 +26,3 @@ class CStage
     {
     }
 }
-

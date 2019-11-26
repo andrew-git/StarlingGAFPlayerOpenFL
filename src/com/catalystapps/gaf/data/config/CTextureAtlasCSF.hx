@@ -2,8 +2,8 @@ package com.catalystapps.gaf.data.config;
 
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class CTextureAtlasCSF
 {
     public var csf(get, never) : Float;
@@ -23,14 +23,14 @@ class CTextureAtlasCSF
     //
     //--------------------------------------------------------------------------
     
-    private var _scale : Float;
-    private var _csf : Float;
+    private var _scale : Float = Math.NaN;
+    private var _csf : Float = Math.NaN;
     
-    private var _sources : Array<CTextureAtlasSource>;
+    private var _sources : Array<CTextureAtlasSource> = null;
     
-    private var _elements : CTextureAtlasElements;
+    private var _elements : CTextureAtlasElements = null;
     
-    private var _atlas : CTextureAtlas;
+    private var _atlas : CTextureAtlas = null;
     
     //--------------------------------------------------------------------------
     //
@@ -43,7 +43,7 @@ class CTextureAtlasCSF
         this._csf = csf;
         this._scale = scale;
         
-        this._sources = new Array<CTextureAtlasSource>();
+        this._sources = [];// new Array<CTextureAtlasSource>();
     }
     
     //--------------------------------------------------------------------------
@@ -121,4 +121,3 @@ class CTextureAtlasCSF
         return elements;
     }
 }
-

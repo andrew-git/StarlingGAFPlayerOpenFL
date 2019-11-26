@@ -7,7 +7,7 @@ import flash.geom.Rectangle;
 /** @private */
 class DisplayUtility
 {
-    public static function getBoundsWithFilters(maxRect : Rectangle, filters : Array<Dynamic>) : Rectangle
+    public static function getBoundsWithFilters(maxRect : Rectangle, filters : Array<BitmapFilter>) : Rectangle
     {
         var filtersLen : Int = filters.length;
         if (filtersLen > 0)

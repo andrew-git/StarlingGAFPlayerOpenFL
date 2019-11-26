@@ -8,4 +8,3 @@ interface ICFilterData
 {
     function clone() : ICFilterData;
 }
-

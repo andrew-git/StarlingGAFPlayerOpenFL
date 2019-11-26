@@ -2,13 +2,13 @@ package com.catalystapps.gaf.data.config;
 
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class CFrameAction
 {
-    public var type : Int;
-    public var scope : String;
-    public var params : Array<String> = new Array<String>();
+    public var type : Int = 0;
+    public var scope : String = null;
+    public var params : Array<String> = [];// new Array<String>();
     
     public static inline var STOP : Int = 0;
     public static inline var PLAY : Int = 1;
@@ -20,4 +20,3 @@ class CFrameAction
     {
     }
 }
-

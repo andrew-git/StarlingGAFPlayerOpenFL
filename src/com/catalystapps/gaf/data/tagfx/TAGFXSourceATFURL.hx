@@ -18,8 +18,8 @@ import starling.textures.Texture;
 
 
 /**
-	 * @private
-	 */
+ * @private
+ */
 class TAGFXSourceATFURL extends TAGFXBase
 {
     //--------------------------------------------------------------------------
@@ -34,11 +34,11 @@ class TAGFXSourceATFURL extends TAGFXBase
     //
     //--------------------------------------------------------------------------
     
-    private var _numTextures : Int;
-    private var _isCubeMap : Bool;
+    private var _numTextures : Int = 0;
+    private var _isCubeMap : Bool = false;
     
-    private var _atfLoader : ATFLoader;
-    private var _atfIsLoading : Bool;
+    private var _atfLoader : ATFLoader = null;
+    private var _atfIsLoading : Bool = false;
     
     //--------------------------------------------------------------------------
     //
@@ -137,8 +137,8 @@ class TAGFXSourceATFURL extends TAGFXBase
     {
         this._atfIsLoading = false;
         
-        var loader : ATFLoader = try cast(event.currentTarget, ATFLoader) catch(e:Dynamic) null;
-        var sourceBA : ByteArray = try cast(loader.data, ByteArray) catch(e:Dynamic) null;
+        var loader : ATFLoader = cast(event.currentTarget, ATFLoader);
+        var sourceBA : ByteArray = cast(loader.data, ByteArray);
         this._texture.root.uploadAtfData(sourceBA, 0, 
                 function(texture : Texture) : Void
                 {
@@ -151,14 +151,14 @@ class TAGFXSourceATFURL extends TAGFXBase
     private function onATFLoadIOError(event : IOErrorEvent) : Void
     {
         this._atfIsLoading = false;
-        var loader : ATFLoader = try cast(event.currentTarget, ATFLoader) catch(e:Dynamic) null;
+        var loader : ATFLoader = cast(event.currentTarget, ATFLoader);
         throw new Error("Can't restore lost context from a ATF file. Can't load file: " + loader.urlRequest.url, event.errorID);
     }
     
     private function onATFLoadSecurityError(event : SecurityErrorEvent) : Void
     {
         this._atfIsLoading = false;
-        var loader : ATFLoader = try cast(event.currentTarget, ATFLoader) catch(e:Dynamic) null;
+        var loader : ATFLoader = cast(event.currentTarget, ATFLoader);
         throw new Error("Can't restore lost context from a ATF file. Can't load file: " + loader.urlRequest.url, event.errorID);
     }
 }
@@ -169,7 +169,7 @@ class ATFLoader extends URLLoader
 {
     public var urlRequest(get, never) : URLRequest;
 
-    private var _req : URLRequest;
+    private var _req : URLRequest = null;
     
     public function new(request : URLRequest = null)
     {
