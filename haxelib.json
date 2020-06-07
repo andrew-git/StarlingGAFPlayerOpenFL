@@ -1,0 +1,16 @@
+{
+	"name": "gafplayer-starling",
+	"url": "https://github.com/andrew-git/StarlingGAFPlayerOpenFL",
+	"license": "MIT",
+	"tags": ["gaf", "openfl", "starling", "cross", "js", "flash", "cpp", "game", "android", "ios"],
+	"description": "GAF Player OpenFL Starling",
+	"version": "2.0.0",
+	"releasenote": "Release GAF Player OpenFL Starling 2.xx version",
+	"contributors": [ "andrew" ],
+	"classPath": "src/",
+	"dependencies": {
+		"openfl": "",
+		"starling": "2.5.1",
+		"zip": ""
+	}
+}
