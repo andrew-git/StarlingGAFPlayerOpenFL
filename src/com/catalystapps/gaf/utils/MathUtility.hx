@@ -45,7 +45,11 @@ class MathUtility
         #if flash
         return untyped __global__['Number'].MAX_VALUE;
         #elseif js
-        return untyped __js__('Number.MAX_VALUE');
+			#if !haxe4
+				return untyped __js__('Number.MAX_VALUE');
+			#else
+				return js.Syntax.code('Number.MAX_VALUE');
+			#end
         #elseif cs
         return untyped __cs__('double.MaxValue');
         #elseif java
